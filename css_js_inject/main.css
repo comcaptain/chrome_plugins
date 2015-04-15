@@ -1,0 +1,40 @@
+#container {
+	width: 500px;
+	height: 330px;
+}
+#jsEditor, #cssEditor { 
+	position: absolute;
+	top: 38px;
+	left: 5px;
+    width: 500px;
+    height: 300px;
+}
+
+#jsEditor {
+	display: none;
+}
+ul.tabs {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	position: relative;
+	left: -3px;
+}
+ul.tabs li {
+	display: inline-block;
+	width: 100px;
+	height: 30px;
+	line-height: 30px;
+	font-family: consolas;
+	color: #337ab7;
+	text-align: center;
+	cursor: pointer;
+}
+ul.tabs li.selected {
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-bottom: none;
+	background: #2F3129;;
+	color: white;
+	cursor: default;
+}

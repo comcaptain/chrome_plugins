@@ -1,0 +1,20 @@
+<html>
+<head>
+	<title>css and js injection</title>
+	<script type="text/javascript" src="lib/jquery-2.1.3.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>
+	<script type="text/javascript" src="common.js"></script>
+	<script type="text/javascript" src="main.js"></script>
+	<link rel="stylesheet" type="text/css" href="main.css">
+</head>
+<body>
+<div id="container">
+	<ul class="tabs">
+		<li id="cssTab" class="tab selected" tab-content-id="cssEditor">CSS</li>
+		<li id="jsTab" class="tab" tab-content-id="jsEditor">Javascript</li>
+	</ul>
+	<div id="cssEditor" class="tabContent"></div>
+	<div id="jsEditor" class="tabContent"></div>
+</div>
+</body>
+</html>
