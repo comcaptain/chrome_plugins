@@ -15,6 +15,9 @@ $(document).ready(function() {
 	bindListeners();
 	chrome.tabs.query({currentWindow: true, active: true}, function(tabs) {
 		window.tab = tabs[0];
+		chrome.tabs.executeScript({
+			file: "content.js"
+		});
 		loadEditorContent().then(injectJsAndCss);
 	})
 });
@@ -30,7 +33,7 @@ function saveEditorContent() {
 }
 function injectJsAndCss() {
 	chrome.tabs.executeScript({
-		code: "updateCss('" + escapeCode(cssEditor.getValue()) + "'); updateJs('" + escapeCode(jsEditor.getValue()) + "')"
+		code: "updateCss('" + escapeCode(cssEditor.getValue()) + "'); updateJs('" + escapeCode(jsEditor.getValue()) + "')",
 	});
 }
 function escapeCode(code) {
