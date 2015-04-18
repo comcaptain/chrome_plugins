@@ -21,6 +21,7 @@ function updateJs(js) {
 	$script[0].innerHTML = js;
 }
 getInjectDataFromStorage().then(function(injectionData) {
+	if (injectionData == undefined) return;
 	updateCss(injectionData.cssInjection);
 	updateJs(injectionData.jsInjection);
 });
