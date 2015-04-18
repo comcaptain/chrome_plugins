@@ -20,6 +20,7 @@ $(document).ready(function() {
 });
 function loadEditorContent() {
 	return getInjectDataFromStorage().then(function(injectionData) {
+		if (injectionData == undefined) return;
 		jsEditor.setValue(injectionData.jsInjection);
 		cssEditor.setValue(injectionData.cssInjection);
 	});
