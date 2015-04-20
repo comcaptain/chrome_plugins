@@ -30,3 +30,10 @@ function saveInjectDataToStorage(jsInjection, cssInjection) {
 	};
 	chrome.storage.sync.set(data);
 }
+function test() {
+	var table = document.createElement("table");
+	table.id = "test";
+	table.style = "display: none";
+	table.innerHTML = "<tr><td>test</td></tr>";
+	document.body.appendChild(table);
+}

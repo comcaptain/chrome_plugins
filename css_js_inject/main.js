@@ -37,7 +37,7 @@ function injectJsAndCss() {
 	});
 }
 function escapeCode(code) {
-	return code.replace(/'/g, "\'").replace(/\n/g, "\\n");
+	return code.replace(/'/g, "\'").replace(/\r?\n/g, "\\n");
 }
 function bindListeners() {
 	$("ul.tabs").on("click", ".tab", function() {
