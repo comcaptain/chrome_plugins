@@ -17,23 +17,18 @@ function getInjectDataFromStorage() {
 			var injectData = {};
 			if (data.jsInjection != undefined) injectData["jsInjection"] = data.jsInjection;
 			if (data.cssInjection != undefined) injectData["cssInjection"] = data.cssInjection;
+			if (data.externalCssInjection != undefined) injectData["externalCssInjection"] = data.externalCssInjection;
 			resolve(injectData);
 		});
 	});
 }
-function saveInjectDataToStorage(jsInjection, cssInjection) {
+function saveInjectDataToStorage(jsInjection, cssInjection, externalCssInjection) {
 	var currentUrl = getHost();
 	var data = {};
 	data[currentUrl] = {
-		cssInjection: cssEditor.getValue(),
-		jsInjection: jsEditor.getValue()
+		cssInjection: cssInjection,
+		jsInjection: jsInjection,
+		externalCssInjection: externalCssInjection 
 	};
 	chrome.storage.sync.set(data);
-}
-function test() {
-	var table = document.createElement("table");
-	table.id = "test";
-	table.style = "display: none";
-	table.innerHTML = "<tr><td>test</td></tr>";
-	document.body.appendChild(table);
 }

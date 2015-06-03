@@ -1,9 +1,10 @@
 var tab;
-var jsEditor, cssEditor;
+var jsEditor, cssEditor, externalCssEditor;
 var storage = chrome.storage.sync;
 function redrawEditor(editor) {
 	editor.resize();
 	editor.renderer.updateFull();
+	editor.focus();
 }
 function bindListeners() {
 	document.querySelector("ul.tabs").addEventListener("click", function(event) {
@@ -23,8 +24,11 @@ function bindListeners() {
 		if (selectedTabEle.id === "cssTab") {
 			redrawEditor(cssEditor);
 		}
-		else {
+		else if (selectedTabEle.id === "jsTab"){
 			redrawEditor(jsEditor);
+		}
+		else {
+			redrawEditor(externalCssEditor);
 		}
 	});
 	cssEditor.on("change", function() {
@@ -34,8 +38,13 @@ function bindListeners() {
 	jsEditor.on("change", function() {
 		saveEditorContent();
 	});
+	externalCssEditor.on("change", function() {
+		saveEditorContent();
+	});
 }
 document.addEventListener("DOMContentLoaded", function() {
+	externalCssEditor = ace.edit("externalCssEditor");
+	externalCssEditor.setTheme("ace/theme/monokai");
 	jsEditor = ace.edit("jsEditor");
 	jsEditor.setTheme("ace/theme/monokai");
 	jsEditor.getSession().setMode("ace/mode/javascript");
@@ -56,10 +65,11 @@ function loadEditorContent() {
 		if (injectionData == undefined) return;
 		jsEditor.setValue(injectionData.jsInjection);
 		cssEditor.setValue(injectionData.cssInjection);
+		externalCssEditor.setValue(injectionData.externalCssInjection.join("\n"));
 	});
 }
 function saveEditorContent() {
-	saveInjectDataToStorage(jsEditor.getValue(), cssEditor.getValue());
+	saveInjectDataToStorage(jsEditor.getValue(), cssEditor.getValue(), externalCssEditor.getValue().split(/\s*\n\s*/));
 }
 function injectCss() {
 	chrome.tabs.executeScript({

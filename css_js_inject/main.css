@@ -2,7 +2,7 @@
 	width: 500px;
 	height: 330px;
 }
-#jsEditor, #cssEditor { 
+#jsEditor, #cssEditor, #externalCssEditor { 
 	position: absolute;
 	top: 38px;
 	left: 5px;
@@ -10,7 +10,7 @@
     height: 300px;
 }
 
-#jsEditor {
+#jsEditor, #externalCssEditor {
 	display: none;
 }
 ul.tabs {

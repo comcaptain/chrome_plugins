@@ -1,9 +1,3 @@
-function loadLib() {
-	return new Promise(function(resolve, reject) {
-		if (window.jQuery)
-		resolve();
-	});
-}
 function updateCss(css) {
 	if (css) css = css.trim();
 	if (css === "") return;
@@ -16,9 +10,19 @@ function updateCss(css) {
 	}
 	style.innerHTML = css;
 }
+function loadExternalCss(urls) {
+	if (!urls) return;
+	urls.forEach(function(url) {
+		var link = document.createElement("link");
+		link.rel = "stylesheet";
+		link.href = url;
+		document.head.appendChild(link);
+	});
+}
 getInjectDataFromStorage().then(function(injectionData) {
 	if (injectionData == undefined) return;
 	updateCss(injectionData.cssInjection);
+	loadExternalCss(injectionData.externalCssInjection);
 	eval(injectionData.jsInjection);
 });
 
