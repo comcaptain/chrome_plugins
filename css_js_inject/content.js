@@ -1,27 +1,31 @@
 function updateCss(css) {
-	var $style = $("style#sgqInjectCss");
-	if ($style.length == 0) {
-		var styleEle = document.createElement("style");
-		styleEle.type = "text/css";
-		styleEle.id = "sgqInjectCss";
-		$style = $(styleEle);
-		$("head").append($style);
+	if (css) css = css.trim();
+	if (css === "") return;
+	var style = document.querySelector("style#sgqInjectCss");
+	if (style === null) {
+		style = document.createElement("style");
+		style.type = "text/css";
+		style.id = "sgqInjectCss";
+		document.head.appendChild(style);
 	}
-	$style[0].innerHTML = css;
+	style.innerHTML = css;
 }
 function updateJs(js) {
-	var $script = $("script#sgqInjectJs");
-	if ($script.length == 0) {
-		var scriptEle = document.createElement("script");
-		scriptEle.type = "text/javascript";
-		scriptEle.id = "sgqInjectJs";
-		$script = $(scriptEle);
-		$("body").append($script);
+	if (js) js = js.trim();
+	if (js === "") return;
+	var script = document.querySelector("script#sgqInjectJs");
+	if (script === null) {
+		script = document.createElement("script");
+		script.type = "text/javascript";
+		script.id = "sgqInjectJs";
+		document.head.appendChild(script);
 	}
-	$script[0].innerHTML = js;
+	script.innerHTML = js;
 }
 getInjectDataFromStorage().then(function(injectionData) {
 	if (injectionData == undefined) return;
 	updateCss(injectionData.cssInjection);
 	updateJs(injectionData.jsInjection);
 });
+
+
