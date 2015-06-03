@@ -10,9 +10,13 @@ function updateCss(css) {
 	}
 	style.innerHTML = css;
 }
+var urlAlias = {
+	"bootstrap": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+}
 function loadExternalCss(urls) {
 	if (!urls) return;
 	urls.forEach(function(url) {
+		if (urlAlias[url] != undefined) url = urlAlias[url];
 		var link = document.createElement("link");
 		link.rel = "stylesheet";
 		link.href = url;
