@@ -28,11 +28,10 @@ function bindListeners() {
 		}
 	});
 	cssEditor.on("change", function() {
-		injectJsAndCss();
+		injectCss();
 		saveEditorContent();
 	});
 	jsEditor.on("change", function() {
-		injectJsAndCss();
 		saveEditorContent();
 	});
 }
@@ -49,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		chrome.tabs.executeScript({
 			file: "content.js"
 		});
-		loadEditorContent().then(injectJsAndCss);
+		loadEditorContent().then(injectCss);
 	})
 });
 function loadEditorContent() {
@@ -62,9 +61,9 @@ function loadEditorContent() {
 function saveEditorContent() {
 	saveInjectDataToStorage(jsEditor.getValue(), cssEditor.getValue());
 }
-function injectJsAndCss() {
+function injectCss() {
 	chrome.tabs.executeScript({
-		code: "updateCss('" + escapeCode(cssEditor.getValue()) + "'); updateJs('" + escapeCode(jsEditor.getValue()) + "')",
+		code: "updateCss('" + escapeCode(cssEditor.getValue()) + "');",
 	});
 }
 function escapeCode(code) {

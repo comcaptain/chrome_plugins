@@ -1,3 +1,9 @@
+function loadLib() {
+	return new Promise(function(resolve, reject) {
+		if (window.jQuery)
+		resolve();
+	});
+}
 function updateCss(css) {
 	if (css) css = css.trim();
 	if (css === "") return;
@@ -10,22 +16,10 @@ function updateCss(css) {
 	}
 	style.innerHTML = css;
 }
-function updateJs(js) {
-	if (js) js = js.trim();
-	if (js === "") return;
-	var script = document.querySelector("script#sgqInjectJs");
-	if (script === null) {
-		script = document.createElement("script");
-		script.type = "text/javascript";
-		script.id = "sgqInjectJs";
-		document.head.appendChild(script);
-	}
-	script.innerHTML = js;
-}
 getInjectDataFromStorage().then(function(injectionData) {
 	if (injectionData == undefined) return;
 	updateCss(injectionData.cssInjection);
-	updateJs(injectionData.jsInjection);
+	eval(injectionData.jsInjection);
 });
 
 
