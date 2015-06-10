@@ -51,13 +51,9 @@ document.addEventListener("DOMContentLoaded", function() {
 	cssEditor = ace.edit("cssEditor");
 	cssEditor.setTheme("ace/theme/monokai");
 	cssEditor.getSession().setMode("ace/mode/css");
-	bindListeners();
 	chrome.tabs.query({currentWindow: true, active: true}, function(tabs) {
 		window.tab = tabs[0];
-		chrome.tabs.executeScript({
-			file: "content.js"
-		});
-		loadEditorContent().then(injectCss);
+		loadEditorContent().then(bindListeners);
 	})
 });
 function loadEditorContent() {
@@ -72,8 +68,9 @@ function saveEditorContent() {
 	saveInjectDataToStorage(jsEditor.getValue(), cssEditor.getValue(), externalCssEditor.getValue().split(/\s*\n\s*/));
 }
 function injectCss() {
+	var value = escapeCode(cssEditor.getValue());
 	chrome.tabs.executeScript({
-		code: "updateCss('" + escapeCode(cssEditor.getValue()) + "');",
+		code: "updateCss('" + value + "');",
 	});
 }
 function escapeCode(code) {

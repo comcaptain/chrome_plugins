@@ -1,11 +1,12 @@
 function updateCss(css) {
 	if (css) css = css.trim();
-	if (css === "") return;
 	var style = document.querySelector("style#sgqInjectCss");
 	if (style === null) {
+		if (css === "") return;
 		style = document.createElement("style");
 		style.type = "text/css";
 		style.id = "sgqInjectCss";
+		style.classList.add("sgqInjectMark");
 		document.head.appendChild(style);
 	}
 	style.innerHTML = css;
@@ -20,6 +21,7 @@ function loadExternalCss(urls) {
 		var link = document.createElement("link");
 		link.rel = "stylesheet";
 		link.href = url;
+		link.classList.add("sgqInjectMark");
 		document.head.appendChild(link);
 	});
 }
@@ -28,6 +30,12 @@ getInjectDataFromStorage().then(function(injectionData) {
 	updateCss(injectionData.cssInjection);
 	loadExternalCss(injectionData.externalCssInjection);
 	eval(injectionData.jsInjection);
+	document.addEventListener("DOMContentLoaded", function() {
+		Array.prototype.forEach.call(document.querySelectorAll(".sgqInjectMark"), function(ele) {
+			document.head.removeChild(ele);
+			document.head.appendChild(ele);
+		});
+	});
 });
 
 
