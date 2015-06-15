@@ -1,0 +1,56 @@
+body {
+	font-family: consolas;
+}
+#container {
+	display: flex;
+	flex-flow: column wrap;
+	height: 100%;
+}
+#top {
+	flex: 8 0 0;
+	display: flex;
+	flex-flow: row wrap;
+}
+#controlPanel {
+	flex: 2 0 0;
+	width: 100%;
+	height: 20%;
+}
+#dataEditor {
+	flex: 1 0 500px;
+	margin: 0 10px 10px 0;
+}
+#log {
+	background-color: #272822;
+	margin: 0 0 10px 0;
+	flex: 1 0 500px;
+	padding: 10px;
+}
+#logList {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	color: white;
+}
+#controlPanel {
+}
+.controlButton {
+	background: rgb(75, 189, 40);
+	color: white;
+	padding: 0 10px;
+	line-height: 30px;
+	border: none;
+	border-radius: 3px;
+	font-size: 16px;
+	outline: none;
+	cursor: pointer;
+	margin-right: 5px;
+}
+.controlButton:hover {
+	box-shadow: rgb(75, 189, 40) 0 0 15px;
+}
+.controlButton[disabled] {
+	background: silver;
+	box-shadow: none;
+	cursor: default;
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "name": "pygmalion login",
+    "url": "https://pygmalion.click/ajax/secretLogin",
+    "method": "POST",
+    "data": {
+      "userName": "test",
+      "password": "test"
+    },
+    "successCheck": "success"
+  },
+  {
+    "name": "get test page",
+    "url": "https://pygmalion.click/article?id=83",
+    "method": "GET",
+    "resources": [
+      {
+        "cssSelector": "#contentContainer img",
+        "attributes": [
+          {
+            "attribute": "src",
+            "download": true
+          }
+        ]
+      },
+      {
+        "cssSelector": "#contentContainer *:not(.timeBox)",
+        "attributes": [
+          "text"
+        ]
+      }
+    ]
+  }
+]

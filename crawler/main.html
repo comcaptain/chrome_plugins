@@ -1,12 +1,67 @@
 <html>
 <head>
 	<title>css and js injection</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>
+  <script type="text/javascript" src="jszip.min.js"></script>
+  <script type="text/javascript" src="filesaver.min.js"></script>
 	<script type="text/javascript" src="main.js"></script>
 	<link rel="stylesheet" type="text/css" href="main.css">
+  <meta charset="utf-8" >
 </head>
 <body>
-	<button id="login">login</button>
-	<button id="send">send</button>
-	<code id="result"></code>
+  <div id="container">
+    <div id="top">
+      <div id="dataEditor">
+[
+  {
+    "name": "pygmalion login",
+    "url": "https://pygmalion.click/ajax/secretLogin",
+    "method": "POST",
+    "data": {
+      "userName": "test",
+      "password": "test"
+    },
+    "successCheck": {
+      "contains": "success",
+      "exitIfFailed": true
+    }
+  },
+  {
+    "name": "test_page",
+    "url": "https://pygmalion.click/article?id=83",
+    "method": "GET",
+    "resources": [
+      {
+        "cssSelector": "#contentContainer img",
+        "attributes": [
+          {
+            "attribute": "src",
+            "download": true
+          }
+        ]
+      },
+      {
+        "cssSelector": "#contentContainer *:not(.timeBox)",
+        "attributes": [
+          "text"
+        ]
+      }
+    ]
+  }
+]
+      </div>
+      <div id="log">
+        <ul id="logList">
+        </ul>
+      </div>
+    </div>
+    <div id="controlPanel">
+      <button class="controlButton" id="start">start</button>
+      <button class="controlButton" id="stop">stop</button>
+      <button class="controlButton" disabled id="downloadResult">download result</button>
+      <button class="controlButton" id="importConfigure">import configure</button>
+      <button class="controlButton" id="download configure">download configure</button>
+    </div>
+  </div>
 </body>
 </html>
