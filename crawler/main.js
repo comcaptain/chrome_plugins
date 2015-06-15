@@ -23,6 +23,9 @@ window.addEventListener("DOMContentLoaded", function() {
 		xhr.send();
 	})
 });
+//分成两类：
+//文字类：一个attribute一个txt文件
+//下载类（目前只有图片）：单独分到一个文件夹
 function startCrawler() {
 	var configure = JSON.parse(jsonEditor.getValue());
 	var promise = Promise.resolve();
