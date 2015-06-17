@@ -3,7 +3,7 @@
 	<title>css and js injection</title>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>
   <script type="text/javascript" src="jszip.min.js"></script>
-  <script type="text/javascript" src="filesaver.min.js"></script>
+  <script type="text/javascript" src="filesaver.js"></script>
 	<script type="text/javascript" src="main.js"></script>
 	<link rel="stylesheet" type="text/css" href="main.css">
   <meta charset="utf-8" >
@@ -16,6 +16,7 @@
   {
     "name": "pygmalion login",
     "url": "https://pygmalion.click/ajax/secretLogin",
+    "responseType": "text",
     "method": "POST",
     "data": {
       "userName": "test",
@@ -28,20 +29,20 @@
   },
   {
     "name": "test_page",
-    "url": "https://pygmalion.click/article?id=83",
+    "url": "https://pygmalion.click/article?id=87",
     "method": "GET",
     "resources": [
       {
         "cssSelector": "#contentContainer img",
         "attributes": [
           {
-            "attribute": "src",
+            "name": "src",
             "download": true
           }
         ]
       },
       {
-        "cssSelector": "#contentContainer *:not(.timeBox)",
+        "cssSelector": "#contentContainer > *:not(#timeBox)",
         "attributes": [
           "text"
         ]

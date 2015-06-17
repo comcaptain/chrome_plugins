@@ -35,7 +35,7 @@ body {
 #controlPanel {
 }
 .controlButton {
-	background: rgb(75, 189, 40);
+	background-image: linear-gradient(to bottom, #4C4843, #272822);
 	color: white;
 	padding: 0 10px;
 	line-height: 30px;
@@ -47,7 +47,7 @@ body {
 	margin-right: 5px;
 }
 .controlButton:hover {
-	box-shadow: rgb(75, 189, 40) 0 0 15px;
+	box-shadow: #272822 0 0 15px;
 }
 .controlButton[disabled] {
 	background: silver;
