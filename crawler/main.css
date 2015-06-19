@@ -7,24 +7,21 @@ body {
 	height: 100%;
 }
 #top {
-	flex: 8 0 0;
+	flex: 9 0 40px;
 	display: flex;
 	flex-flow: row wrap;
 }
 #bottom {
-	flex: 2 0 0;
+	flex: 1 0 40px;
 	width: 100%;
-	height: 20%;
 	display: flex;
 	flex-flow: row wrap;
 }
 #controlPanel {
 	width: 50%;
-	height: 100%;
 }
 #statusPanel {
 	width: 50%;
-	height: 100%;
 }
 #dataEditor {
 	flex: 1 0 500px;
