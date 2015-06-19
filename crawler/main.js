@@ -3,28 +3,55 @@ var crawler;
 window.addEventListener("DOMContentLoaded", function() {
 	jsonEditor = ace.edit("dataEditor");
 	jsonEditor.setTheme("ace/theme/monokai");
-	jsonEditor.getSession().setMode("ace/mode/json");
+	jsonEditor.getSession().setMode("ace/mode/javascript");
 	crawler = new Crawler({
 		log: function(text) {
 			var ele = document.createElement("li");
 			ele.textContent = text;
 			document.getElementById("logList").appendChild(ele);
+			var scrollElement = document.getElementById("log");
+			scrollElement.scrollTop = scrollElement.scrollHeight;
+		},
+		onProgressChange: function(loadedCount, toBeLoadedCount) {
+			var percentage = 0;
+			if (toBeLoadedCount > 0) percentage = loadedCount / toBeLoadedCount;
+			percentage = Math.round(percentage * 100);
+			var ele = document.getElementById("downloadProgress");
+			ele.textContent = loadedCount + "/" + toBeLoadedCount;
+			ele.style.width = percentage + "%";
 		}
 	});
 	document.querySelector("#start").addEventListener("click", function() {
-		crawler.crawl(JSON.parse(jsonEditor.getValue()));
+		eval("var configure = " + jsonEditor.getValue());
+		crawler.crawl(configure);
 	});
 });
 // {
-// 	log: function(text) {}//not required, will use console to output log if not specified
+// 	log: function(text) {}, //not required, will use console to output log if not specified
+// 	checkBadLink: false,
+// 	onProgressChange: function(percentage) {}
 // }
 function Crawler(config) {
 	this.config = config;
 	this.zip = new JSZip();
 }
 Crawler.prototype = {
+	//http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-an-object
+	clone: function(obj) {
+	    if(obj === null || typeof(obj) !== 'object' || 'isActiveClone' in obj)
+	        return obj;
+	    var temp = obj.constructor(); // changed
+	    for(var key in obj) {
+	        if(Object.prototype.hasOwnProperty.call(obj, key)) {
+	            obj['isActiveClone'] = null;
+	            temp[key] = this.clone(obj[key]);
+	            delete obj['isActiveClone'];
+	        }
+	    }    
+	    return temp;
+	},
 	generateParamsUrl: function(jsonParams) {
-		if (jsonParams === undefined) return;
+		if (jsonParams === undefined) return "";
 		var paramsUrl = "";
 		for (var key in jsonParams) {
 			paramsUrl += key + "=" + jsonParams[key] + "&";
@@ -34,15 +61,26 @@ Crawler.prototype = {
 		}
 		return paramsUrl;
 	},
+	lefPad: function(str, target, fillChar) {
+		str = str + "";
+		if (fillChar === undefined) fillChar = "0";
+		var fillCharCount = target - str.length;
+		for (var i = 0; i < fillCharCount; i++) {
+			str = fillChar + str;
+		}
+		return str;
+	},
 	generateTimeStamp: function(date) {
 		if (date === undefined) date = new Date();
-		return date.getFullYear() + "/" + (date.getMonth() + 1) + "/" + date.getDate() + " " + 
-				date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ":" + date.getMilliseconds();
+		return date.getFullYear() + "/" + this.lefPad(date.getMonth() + 1, 2) + "/" + this.lefPad(date.getDate(), 2) + " " + 
+				this.lefPad(date.getHours(), 2) + ":" + this.lefPad(date.getMinutes(), 2) + ":" + this.lefPad(date.getSeconds(), 2) + 
+				"." + this.lefPad(date.getMilliseconds(), 3);
 	},
 	generateTimeStampTail: function(date) {
 		if (date === undefined) date = new Date();
-		return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "_" + 
-				date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ":" + date.getMilliseconds();
+		return date.getFullYear() + "_" + this.lefPad(date.getMonth() + 1, 2) + "_" + this.lefPad(date.getDate(), 2) + "_" + 
+				this.lefPad(date.getHours(), 2) + ":" + this.lefPad(date.getMinutes(), 2) + ":" + this.lefPad(date.getSeconds(), 2) + 
+				"." + this.lefPad(date.getMilliseconds(), 3);
 	},
 	shrinkText: function(text) {
 		var shrunkText = "";
@@ -52,7 +90,38 @@ Crawler.prototype = {
 			if (line === "") continue;
 			shrunkText += line + "\n";
 		}
+		if (shrunkText !== "") return shrunkText.substring(0, shrunkText.length - 1);
 		return shrunkText;
+	},
+	getAttributeValue: function(element, attribute, isUrl, doc) {
+		if (!element) {
+			console.log(doc.URL);
+		}
+		var value;
+		if (attribute === "text") value = element.textContent;
+		else value = element.getAttribute(attribute);
+		if (isUrl && value.indexOf("http") != 0) {
+			var parts = doc.URL.match(/^(https?:\/\/)(.*)$/);
+			var schema = parts[1];
+			var url = parts[2];
+			if (value.charAt(0) === "/") {
+				var domain = url;
+				var index = domain.indexOf("/");
+				if (index >= 0) {
+					domain = domain.substring(0, index);
+				}
+				value = domain + value;
+			}
+			else {
+				var lastIndex = url.lastIndexOf("/");
+				if (lastIndex === -1)
+					value = url + "/" + value;
+				else
+					value = url.substring(0, url.lastIndexOf("/") + 1) + value;
+			}
+			value = schema + value;
+		}
+		return value;
 	},
 	log: function(text) {
 		var date = new Date();
@@ -69,9 +138,10 @@ Crawler.prototype = {
 	//下载类（目前只有图片）：单独分到一个文件夹
 	crawl: function(crawlConfigure) {
 		var self = this;
-		this.data = {};
-		this.downloadingCount = 0;
-		this.pendingPromises = [];
+		this.data = [];
+		this.variables = {};
+		this.toBeLoadedCount = 0;
+		this.loadedCount = 0;
 		this.zip = new JSZip();
 		var promise = Promise.resolve();
 		crawlConfigure.forEach(function(pageConfigure) {
@@ -80,54 +150,264 @@ Crawler.prototype = {
 			});
 		});
 		promise.then(function() {
-			for (var name in self.data) {
-				self.zip.file(name + ".txt", self.data[name]);
-			}
-		});
-		this.pendingPromises.push(promise);
-		Promise.all(this.pendingPromises).then(function() {
-			var content = self.zip.generate({type:"blob"});
-			saveAs(content, "result.zip");
-		});
+			console.log(this.data);
+		}.bind(this));
 
 	},
 	crawlPage: function(pageConfigure) {
+		pageConfigure = this.clone(pageConfigure);		
+		var self = this;
+		var urls = [];
+		if (pageConfigure.urlVariable !== undefined) {
+			urls = self.variables[pageConfigure.urlVariable]
+		}
+		else {
+			urls.push(pageConfigure.url);
+		}
+		var crawlPromises = [];
+		urls.forEach(function(url) {
+			var tempPageConfigure = self.clone(pageConfigure);
+			tempPageConfigure.url = url;
+			if (tempPageConfigure.onlyLz !== undefined) {
+				this.addParameter(tempPageConfigure, tempPageConfigure.onlyLz);
+			}
+			var pageData = {
+				url: tempPageConfigure.url
+			};
+			var urlLoadPromise = null;
+			if (tempPageConfigure.paging === undefined) urlLoadPromise = this.crawlUrl(tempPageConfigure, pageData);
+			else {
+				urlLoadPromise = self.loadPagingInfo(tempPageConfigure).then(function(pageConfigures) {
+					var ps = [];
+					var dataMap = {};
+					var pageCount = pageConfigures;
+					pageConfigures.forEach(function(pageConfigure, index) {
+						var pageDataFragment = {};
+						ps.push(self.crawlUrl(pageConfigure, pageDataFragment).then(function() {
+							dataMap[index] = pageDataFragment;
+						}));
+					});
+					return Promise.all(ps).then(function() {
+						for (var i = 0; i < pageCount.length; i++) {
+							var pageDataFragment = dataMap[i];
+							if (pageDataFragment.images) {
+								if (pageData.images === undefined) pageData.images = pageDataFragment.images;
+								else pageData.images = pageData.images.concat(pageDataFragment.images);
+							}
+							if (pageDataFragment.attachments) {
+								if (pageData.attachments === undefined) pageData.attachments = pageDataFragment.attachments;
+								else pageData.attachments = pageData.attachments.concat(pageDataFragment.attachments);
+							}
+							if (pageDataFragment.text) {
+								if (pageData.text === undefined) pageData.text = pageDataFragment.text;
+								else pageData.text += "\n" + (pageDataFragment.text);
+							}
+							if (pageDataFragment.title && pageData.title === undefined) {
+								pageData.title = pageDataFragment.title;
+							}
+						}
+					});
+				});
+			}
+			urlLoadPromise.then(function() {
+				if (pageData.text) {
+					self.onOnePageLoaded(pageData);
+					self.data.push(pageData);
+				}
+			});
+			crawlPromises.push(urlLoadPromise);
+
+		}.bind(this));
+		return Promise.all(crawlPromises);
+	},
+	loadPagingInfo: function(pageConfigure) {
+		var self = this;
+		return new Promise(function(resolve, reject) {
+			var values = pageConfigure.paging.values;
+			if (typeof values === "function") {
+				if (pageConfigure.paging.maxPage !== undefined) {
+					var maxPageConfigure = pageConfigure.paging.maxPage;
+					self.loadUrl(pageConfigure, function(xhr, resolve, reject) {
+						var element = xhr.response.querySelector(maxPageConfigure.cssSelector);
+						var maxPage;
+						if (!element) maxPage = 1;
+						else maxPage = parseInt(self.getAttributeValue(element, maxPageConfigure.attribute));
+						resolve(pageConfigure.paging.values(maxPage));
+					}, function(xhr, resolve, reject) {
+						resolve(pageConfigure.paging.values(1));
+					}).then(resolve);
+				}
+				else {
+					resolve(pageConfigure.paging.values());
+				}
+			}
+			else {
+				resolve(values);
+			}
+		}.bind(this)).then(function(values) {
+			var pageConfigures = [];
+			var key = pageConfigure.paging.key;
+			for (var i = 0; i < values.length; i++) {
+				var p = this.clone(pageConfigure);
+				this.addParameter(p, [key, values[i]]);
+				pageConfigures.push(p);
+			}
+			return pageConfigures;
+		}.bind(this));
+	},
+	addParameter: function(pageConfigure, extraParameter) {
+		if (extraParameter === undefined) return;
+		if (pageConfigure.method.toLowerCase() === "get") {
+			if (pageConfigure.url.indexOf("?") < 0) pageConfigure.url += "?";
+			else pageConfigure.url += "&";
+			pageConfigure.url += extraParameter[0] + "=" + extraParameter[1];
+		}
+		else {
+			pageConfigure[extraParameter[0]] = extraParameter[1];
+		}
+	},
+	crawlUrl: function(pageConfigure, pageData) {
+		var self = this;
+		return this.loadUrl(pageConfigure, function(xhr, resolve, reject) {
+			var doc = xhr.response;
+			if (!self.existCheck(pageConfigure, xhr.response)) {
+				reject(); return;
+			}
+			self.extractPageData(pageConfigure, doc, pageData);
+			resolve();
+		}, function(xhr, resolve, reject) {
+			if (pageConfigure.successCheck && pageConfigure.successCheck.exitIfFailed) reject();
+			else resolve();
+		});
+	},
+	loadUrl: function(pageConfigure, onload, onerror) {
 		var self = this;
 		return new Promise(function(resolve, reject) {
 			self.log(pageConfigure.name + ":[" + pageConfigure.url + "] started");
 			var xhr = new XMLHttpRequest();
-			xhr.open(pageConfigure.method, pageConfigure.url);
+			var url = pageConfigure.url;
+			xhr.open(pageConfigure.method, url);
 			if (pageConfigure.responseType !== undefined) xhr.reponseType = pageConfigure.responseType;
 			else xhr.responseType = "document";
 			xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded");
 			xhr.onload = function() {
-				self.log(pageConfigure.url + " accessed");
-				var doc = xhr.response;
-				if (!self.existCheck(pageConfigure, xhr.response)) {
-					reject(); return;
-				}
-				self.extractPageData(pageConfigure, doc);
-				resolve();
+				self.log(pageConfigure.url + " loaded");
+				self.onFinishRequest();
+				onload.call(self, xhr, resolve, reject);
 			};
 			xhr.onerror = function() {
 				self.log(pageConfigure.url + " failed");
-				resolve();
+				self.onFinishRequest();
+				onerror.call(self, xhr, resolve, reject);
 			}
-			xhr.send(self.generateParamsUrl(pageConfigure.data));
+			var parameterUrl = self.generateParamsUrl(pageConfigure.data);
+			xhr.send(parameterUrl);
+			self.onStartRequest();
 		});
 	},
-	extractPageData: function(pageConfigure, doc) {
+	onStartRequest: function() {
+		this.toBeLoadedCount++;
+		this.refreshProgress();
+	},
+	onFinishRequest: function() {
+		this.loadedCount++;
+		this.refreshProgress();
+	},
+	refreshProgress: function() {
+		if (this.config.onProgressChange) this.config.onProgressChange(this.loadedCount, this.toBeLoadedCount);
+	},
+	extractPageData: function(pageConfigure, doc, pageData) {
 		if (pageConfigure.resources === undefined) return;
 		var self = this;
 		for (var i = 0; i < pageConfigure.resources.length; i++) {
 			var resource = pageConfigure.resources[i];
 			var elements = doc.querySelectorAll(resource.cssSelector);
 			if (elements.length === 0) {
-				this.log("[" + pageConfigure.name + "][" + resource.cssSelector + "] 失败");
+				// this.log("[" + pageConfigure.name + "][" + resource.cssSelector + "] 失败");
 				continue;
 			}
-			self.extractElementsData(elements, resource.attributes);
+			self.extractElementsData(doc, elements, resource, pageData);
 		}
+	},
+	extractElementsData: function(doc, elements, resource, pageData) {
+		var self = this;
+		Array.prototype.forEach.call(elements, function(element) {
+			var　value = self.getAttributeValue(element, resource.attribute, resource.isUrl, doc);
+			switch(resource.type) {
+				case "title": 
+					pageData.title = value;
+					break;
+				case "text":
+					value = self.shrinkText(value);
+					if (pageData.text === undefined) pageData.text = value;
+					else pageData.text += value + "\n";
+					break;
+				case "image":
+					if (pageData.images === undefined) pageData.images = [value];
+					else pageData.images.push(value);
+					break;
+				case "attachment":
+					if (pageData.attachments === undefined) pageData.attachments = [value];
+					else pageData.attachments.push(value);
+					break;
+			}
+			if (resource.variable !== undefined) {
+				//test command
+				if(self.variables[resource.variable] === undefined) self.variables[resource.variable] = [value];
+				self.variables[resource.variable].push(value);
+			}
+		});
+	},
+	onOnePageLoaded: function(pageData) {
+		if (!this.config.checkBadLink) {
+			this.renderPageData(pageData);
+			return;
+		}
+		var legalImages = [];
+		var legalAttachements = [];
+		var promises = [];
+		var self = this;
+		if (pageData.images) {
+			pageData.images.forEach(function(url) {
+				var promise = self.checkBadLink(url);
+				promise.then(function(legal) {
+					if (legal) legalImages.push(url);
+				});
+				promises.push(promise);
+			});
+		}
+		if (pageData.attachments) {
+			pageData.attachments.forEach(function(url) {
+				var promise = self.checkBadLink(url);
+				promise.then(function(legal) {
+					if (legal) legalAttachements.push(url);
+				});
+				promises.push(promise);
+			});
+		}
+		Promise.all(promises).then(function() {
+			pageData.images = legalImages;
+			pageData.attachments = legalAttachements;
+			self.renderPageData(pageData);
+		});
+	},
+	renderPageData: function(pageData) {
+		var s = pageData.url + "\n" + pageData.title + "\n" + (pageData.images != undefined ? pageData.images.join("\n") + "\n" : "") + pageData.text;
+		var blob = new Blob([s], {type: "text/plain;charset=utf-8"});
+		saveAs(blob, pageData.title + this.generateTimeStampTail() + ".txt");
+	},
+	checkBadLink: function(url) {
+		return new Promise(function(resolve, reject) {
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", url);
+			xhr.onload = function() {
+				resolve(true);
+			}
+			xhr.onerror = function() {
+				resolve(false);
+			}
+			xhr.send();
+		});
 	},
 	downloadFile: function(url) {
 		var matches = url.match(/^data:[^;/]+\/([^;/]+);base64,(.*)$/);
@@ -171,28 +451,6 @@ Crawler.prototype = {
 			xhr.send(self.generateParamsUrl(pageConfigure.data));
 		}.bind(this));
 		self.pendingPromises.push(promise);
-	},
-	extractElementsData: function(elements, attributes) {
-		var self = this;
-		Array.prototype.forEach.call(elements, function(element) {
-			attributes.forEach(function(attribute) {
-				if (typeof attribute === "string") {
-					attribute = {name: attribute};
-				}
-				if (attribute.download) {
-					var url = element.getAttribute(attribute.name);
-					self.downloadFile(url);
-				}
-				else {
-					if (self.data[attribute.name] === undefined) self.data[attribute.name] = "";
-					var text = "";
-					if (attribute.name === "text") text = element.textContent;
-					else text = element.getAttribute(attribute.name);
-					text = self.shrinkText(text);
-					self.data[attribute.name] += text;
-				}
-			});
-		});
 	},
 	existCheck: function(pageConfigure, doc) {
 		var text;

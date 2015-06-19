@@ -1,17 +1,3 @@
-<html>
-<head>
-	<title>css and js injection</title>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>
-  <script type="text/javascript" src="jszip.min.js"></script>
-  <script type="text/javascript" src="filesaver.js"></script>
-	<script type="text/javascript" src="main.js"></script>
-  <meta charset="utf-8"/>
-	<link rel="stylesheet" type="text/css" href="main.css">
-</head>
-<body>
-  <div id="container">
-    <div id="top">
-      <div id="dataEditor">
 [
   {
     "name": "bar page",
@@ -71,26 +57,3 @@
     ]
   }
 ]
-      </div>
-      <div id="log">
-        <ul id="logList">
-        </ul>
-      </div>
-    </div>
-    <div id="bottom">
-      <div id="controlPanel">
-        <button class="controlButton" id="start">start</button>
-        <button class="controlButton" id="stop">stop</button>
-        <button class="controlButton" disabled id="downloadResult">download result</button>
-        <button class="controlButton" id="importConfigure">import configure</button>
-        <button class="controlButton" id="download configure">download configure</button>
-      </div>
-      <div id="statusPanel">
-        <div class="progressBarSlot">
-          <div id="downloadProgress" class="progressBar"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
