@@ -16,23 +16,38 @@ function renderData() {
 	else {
 		attachmentsElement.innerHTML = "";
 	}
+	var hasContent = false;
 	var imagesElement = document.querySelector("#images");
-	if (data.images) {
-		var html = "";
+	var statusElement = document.querySelector("#imageLoadStatus");
+	statusElement.textContent = "";
+	if (data.images && document.querySelector("#imageFilter").checked) {
+		imagesElement.innerHTML = "";
+		var total = data.images.length;
+		var loaded = 0;
+		statusElement.textContent = loaded + "/" + total;
 		data.images.forEach(function(url, index) {
-			html += '<img src="' + url + '"/>';
+			var imageElement = document.createElement("img");
+			imageElement.addEventListener("load", function() {
+				loaded++;
+				statusElement.textContent = loaded + "/" + total;
+			});
+			imageElement.src = url;
+			imagesElement.appendChild(imageElement);
+			hasContent = true;
 		});
-		imagesElement.innerHTML = html;
 	}
 	else {
 		imagesElement.innerHTML = "";
 	}
-	if (data.text) {
+	if (data.text && document.querySelector("#textFilter").checked) {
 		document.querySelector("#text").innerHTML = data.text;
+			hasContent = true;
 	}
 	else {
 		document.querySelector("#text").innerHTML = "";
 	}
+	document.querySelector("#images").focus();
+	if (!hasContent && currentIndex !== 0) nextPage();
 }
 function refresh() {
 	var length = window.opener.crawler.data.length;
