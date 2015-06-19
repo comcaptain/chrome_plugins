@@ -143,6 +143,7 @@ Crawler.prototype = {
 		this.toBeLoadedCount = 0;
 		this.loadedCount = 0;
 		this.zip = new JSZip();
+		this.viewer = window.open("viewer.html");
 		var promise = Promise.resolve();
 		crawlConfigure.forEach(function(pageConfigure) {
 			promise = promise.then(function() {
@@ -210,7 +211,7 @@ Crawler.prototype = {
 				});
 			}
 			urlLoadPromise.then(function() {
-				if (pageData.text) {
+				if (Object.keys(pageData).length > 1) {
 					self.onOnePageLoaded(pageData);
 					self.data.push(pageData);
 				}
@@ -354,7 +355,7 @@ Crawler.prototype = {
 			if (resource.variable !== undefined) {
 				//test command
 				if(self.variables[resource.variable] === undefined) self.variables[resource.variable] = [value];
-				self.variables[resource.variable].push(value);
+				else if (self.variables[resource.variable].length < 10000) self.variables[resource.variable].push(value);
 			}
 		});
 	},
@@ -392,9 +393,10 @@ Crawler.prototype = {
 		});
 	},
 	renderPageData: function(pageData) {
-		var s = pageData.url + "\n" + pageData.title + "\n" + (pageData.images != undefined ? pageData.images.join("\n") + "\n" : "") + pageData.text;
-		var blob = new Blob([s], {type: "text/plain;charset=utf-8"});
-		saveAs(blob, pageData.title + this.generateTimeStampTail() + ".txt");
+		// this.viewer.addData(pageData);
+		// var s = pageData.url + "\n" + pageData.title + "\n" + (pageData.images != undefined ? pageData.images.join("\n") + "\n" : "") + pageData.text;
+		// var blob = new Blob([s], {type: "text/plain;charset=utf-8"});
+		// saveAs(blob, pageData.title + this.generateTimeStampTail() + ".txt");
 	},
 	checkBadLink: function(url) {
 		return new Promise(function(resolve, reject) {

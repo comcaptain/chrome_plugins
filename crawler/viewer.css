@@ -1,0 +1,33 @@
+html, body {
+	margin: 0;
+	padding: 0;
+}
+body, pre {
+	font-family: Microsoft YaHei;
+}
+#topBar {
+	height: 30px;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	text-align: center;
+}
+#content {
+	height: calc(100vh - 45px);
+	margin-top: 30px;
+	overflow: auto;
+	overflow-x: hidden;
+}
+#images img {
+	max-width: 100%;
+	display: block;
+	margin: 0 auto;
+}
+#text {
+	white-space: pre-line;
+	width: 900px;
+	margin: 0 auto;
+	font-size: 16px;
+	line-height: 25px;
+}
