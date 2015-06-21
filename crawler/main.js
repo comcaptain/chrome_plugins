@@ -61,7 +61,7 @@ Crawler.prototype = {
 		}
 		return paramsUrl;
 	},
-	lefPad: function(str, target, fillChar) {
+	leftPad: function(str, target, fillChar) {
 		str = str + "";
 		if (fillChar === undefined) fillChar = "0";
 		var fillCharCount = target - str.length;
@@ -72,15 +72,15 @@ Crawler.prototype = {
 	},
 	generateTimeStamp: function(date) {
 		if (date === undefined) date = new Date();
-		return date.getFullYear() + "/" + this.lefPad(date.getMonth() + 1, 2) + "/" + this.lefPad(date.getDate(), 2) + " " + 
-				this.lefPad(date.getHours(), 2) + ":" + this.lefPad(date.getMinutes(), 2) + ":" + this.lefPad(date.getSeconds(), 2) + 
-				"." + this.lefPad(date.getMilliseconds(), 3);
+		return date.getFullYear() + "/" + this.leftPad(date.getMonth() + 1, 2) + "/" + this.leftPad(date.getDate(), 2) + " " + 
+				this.leftPad(date.getHours(), 2) + ":" + this.leftPad(date.getMinutes(), 2) + ":" + this.leftPad(date.getSeconds(), 2) + 
+				"." + this.leftPad(date.getMilliseconds(), 3);
 	},
 	generateTimeStampTail: function(date) {
 		if (date === undefined) date = new Date();
-		return date.getFullYear() + "_" + this.lefPad(date.getMonth() + 1, 2) + "_" + this.lefPad(date.getDate(), 2) + "_" + 
-				this.lefPad(date.getHours(), 2) + ":" + this.lefPad(date.getMinutes(), 2) + ":" + this.lefPad(date.getSeconds(), 2) + 
-				"." + this.lefPad(date.getMilliseconds(), 3);
+		return date.getFullYear() + "_" + this.leftPad(date.getMonth() + 1, 2) + "_" + this.leftPad(date.getDate(), 2) + "_" + 
+				this.leftPad(date.getHours(), 2) + ":" + this.leftPad(date.getMinutes(), 2) + ":" + this.leftPad(date.getSeconds(), 2) + 
+				"." + this.leftPad(date.getMilliseconds(), 3);
 	},
 	shrinkText: function(text) {
 		var shrunkText = "";
@@ -162,14 +162,23 @@ Crawler.prototype = {
 		if (pageConfigure.urlVariable !== undefined) {
 			urls = self.variables[pageConfigure.urlVariable]
 		}
-		else {
+		else if (typeof pageConfigure.url === "string"){
 			urls.push(pageConfigure.url);
+		}
+		else if (typeof pageConfigure.url === "object"){
+			urls = urls.concat(pageConfigure.url);
+		}
+		else if (typeof pageConfigure.url === "function"){
+			urls = urls.concat(pageConfigure.url());
 		}
 		var crawlPromises = [];
 		urls.forEach(function(url) {
 			var tempPageConfigure = self.clone(pageConfigure);
 			tempPageConfigure.url = url;
 			if (tempPageConfigure.onlyLz !== undefined) {
+				if (tempPageConfigure.onlyLz.cssSelector !== undefined) {
+					tempPageConfigure
+				}
 				this.addParameter(tempPageConfigure, tempPageConfigure.onlyLz);
 			}
 			var pageData = {
@@ -393,10 +402,9 @@ Crawler.prototype = {
 		});
 	},
 	renderPageData: function(pageData) {
-		// this.viewer.addData(pageData);
-		// var s = pageData.url + "\n" + pageData.title + "\n" + (pageData.images != undefined ? pageData.images.join("\n") + "\n" : "") + pageData.text;
-		// var blob = new Blob([s], {type: "text/plain;charset=utf-8"});
-		// saveAs(blob, pageData.title + this.generateTimeStampTail() + ".txt");
+		var s = pageData.url + "\n" + pageData.title + "\n" + (pageData.images != undefined ? pageData.images.join("\n") + "\n" : "") + pageData.text;
+		var blob = new Blob([s], {type: "text/plain;charset=utf-8"});
+		saveAs(blob, pageData.title + this.generateTimeStampTail() + ".txt");
 	},
 	checkBadLink: function(url) {
 		return new Promise(function(resolve, reject) {

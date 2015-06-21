@@ -47,6 +47,7 @@ function renderData() {
 		document.querySelector("#text").innerHTML = "";
 	}
 	document.querySelector("#images").focus();
+	document.querySelector("#content").scrollTop = 0
 	if (!hasContent && currentIndex !== 0) nextPage();
 }
 function refresh() {
