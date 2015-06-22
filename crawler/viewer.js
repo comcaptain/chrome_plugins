@@ -1,5 +1,36 @@
 var currentIndex = 0;
 var firstLoaded = false;
+var loaded = 0;
+var total = 0;
+function imageOnlaod() {
+	loaded++;
+	updateImagesLoadStatus();
+}
+function updateImagesLoadStatus() {
+	var statusElement = document.querySelector("#imageLoadStatus");
+	statusElement.textContent = (total === 0) ? "" : loaded + "/" + total;
+}
+function clearImages() {
+	var imagesElement = document.querySelector("#images");
+	Array.prototype.forEach.call(imagesElement.querySelectorAll("img"), function(img) {
+		img.removeEventListener("load", imageOnlaod);
+	});
+	imagesElement.innerHTML = "";
+	loaded = 0;
+	total = 0;
+	updateImagesLoadStatus();
+}
+function addImages(urls) {
+	total = urls.length;
+	updateImagesLoadStatus();
+	var imagesElement = document.querySelector("#images");
+	urls.forEach(function(url) {
+		var imageElement = document.createElement("img");
+		imageElement.src = url;
+		imageElement.addEventListener("load", imageOnlaod);
+		imagesElement.appendChild(imageElement);
+	});
+}
 function renderData() {
 	var data = window.opener.crawler.data[currentIndex];
 	var titleElement = document.querySelector("#title");
@@ -17,27 +48,9 @@ function renderData() {
 		attachmentsElement.innerHTML = "";
 	}
 	var hasContent = false;
-	var imagesElement = document.querySelector("#images");
-	var statusElement = document.querySelector("#imageLoadStatus");
-	statusElement.textContent = "";
+	clearImages();
 	if (data.images && document.querySelector("#imageFilter").checked) {
-		imagesElement.innerHTML = "";
-		var total = data.images.length;
-		var loaded = 0;
-		statusElement.textContent = loaded + "/" + total;
-		data.images.forEach(function(url, index) {
-			var imageElement = document.createElement("img");
-			imageElement.addEventListener("load", function() {
-				loaded++;
-				statusElement.textContent = loaded + "/" + total;
-			});
-			imageElement.src = url;
-			imagesElement.appendChild(imageElement);
-			hasContent = true;
-		});
-	}
-	else {
-		imagesElement.innerHTML = "";
+		addImages(data.images);
 	}
 	if (data.text && document.querySelector("#textFilter").checked) {
 		document.querySelector("#text").innerHTML = data.text;
@@ -71,7 +84,7 @@ function nextPage() {
 window.addEventListener("DOMContentLoaded", function() {
 	document.getElementById("prevPage").addEventListener("click", prevPage);
 	document.getElementById("nextPage").addEventListener("click", nextPage);
-	setInterval(refresh, 500);
+	setInterval(refresh, 1000);
 	window.addEventListener("keydown", function(event) {
 		if (event.keyCode == 37) {
 			event.preventDefault();

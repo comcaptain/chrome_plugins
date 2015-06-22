@@ -402,9 +402,9 @@ Crawler.prototype = {
 		});
 	},
 	renderPageData: function(pageData) {
-		var s = pageData.url + "\n" + pageData.title + "\n" + (pageData.images != undefined ? pageData.images.join("\n") + "\n" : "") + pageData.text;
-		var blob = new Blob([s], {type: "text/plain;charset=utf-8"});
-		saveAs(blob, pageData.title + this.generateTimeStampTail() + ".txt");
+		// var s = pageData.url + "\n" + pageData.title + "\n" + (pageData.images != undefined ? pageData.images.join("\n") + "\n" : "") + pageData.text;
+		// var blob = new Blob([s], {type: "text/plain;charset=utf-8"});
+		// saveAs(blob, pageData.title + this.generateTimeStampTail() + ".txt");
 	},
 	checkBadLink: function(url) {
 		return new Promise(function(resolve, reject) {
