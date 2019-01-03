@@ -3,20 +3,22 @@
 	<title>css and js injection</title>
 	<!--<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>-->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>
-	<script type="text/javascript" src="common.js"></script>
+	<script type="text/javascript" src="injected-data.js"></script>
+	<script type="text/javascript" src="data-storage.js"></script>
+	<script type="text/javascript" src="injected-data-storage.js"></script>
 	<script type="text/javascript" src="main.js"></script>
 	<link rel="stylesheet" type="text/css" href="main.css">
 </head>
 <body>
 <div id="container">
 	<ul class="tabs">
-		<li id="cssTab" class="tab selected" tab-content-id="cssEditor">CSS</li>
-		<li id="externalCssTab" class="tab" tab-content-id="externalCssEditor">external css</li>
-		<li id="jsTab" class="tab" tab-content-id="jsEditor">Javascript</li>
+		<li id="css-tab" class="tab selected" tab-content-id="css-editor">CSS</li>
+		<li id="external-stylesheet-tab" class="tab" tab-content-id="external-css-editor">external css</li>
+		<li id="js-tab" class="tab" tab-content-id="js-editor">Javascript</li>
 	</ul>
-	<div id="cssEditor" class="tabContent"></div>
-	<div id="externalCssEditor" class="tabContent"></div>
-	<div id="jsEditor" class="tabContent"></div>
+	<div id="css-editor" class="tab-content"></div>
+	<div id="external-css-editor" class="tab-content"></div>
+	<div id="js-editor" class="tab-content"></div>
 </div>
 </body>
 </html>
