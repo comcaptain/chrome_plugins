@@ -38,8 +38,12 @@ body, html {
 	margin-bottom: 5px;
 }
 
-#domain-label {
+#domain-container > *{
 	font-weight: bold;
+	color: #337ab7;
+}
+
+#domain-label {
 	margin-right: 5px;
 }
 

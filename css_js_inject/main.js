@@ -1,7 +1,8 @@
 (function()
 {
-	let jsEditor, cssEditor, externalCSSEditor;
+	let jsEditor, cssEditor, externalCSSEditor, injectDomainNode;
 	let dataStorage = new InjectedDataStorage(new DataStorage());
+	let currentInjectionData;
 
 	function initializeEditors()
 	{
@@ -15,6 +16,8 @@
 		cssEditor = ace.edit("css-editor");
 		cssEditor.setTheme("ace/theme/monokai");
 		cssEditor.getSession().setMode("ace/mode/css");
+
+		injectDomainNode = document.querySelector("#domain")
 	}
 
 	function activateTabSwitch()
@@ -62,6 +65,9 @@
 		});
 		externalCSSEditor.on("change", function() {
 			saveEditorContent();
+		});	
+		injectDomainNode.addEventListener("input", function() {
+			saveEditorContent();
 		});		
 	}
 
@@ -76,7 +82,8 @@
 	{
 		initializeEditors();
 
-		chrome.tabs.query({currentWindow: true, active: true}, function(tabs) {
+		chrome.tabs.query({currentWindow: true, active: true}, function(tabs)
+		{
 			// Save current tab to get correct url in InjectedDataStorage
 			window.tab = tabs[0];
 			loadEditorContent().then(() =>
@@ -89,17 +96,30 @@
 
 	function loadEditorContent()
 	{
-		return dataStorage.load().then(function(injectionData) {
+		return dataStorage.load().then(function(injectionData)
+		{
 			if (!injectionData) return;
 			jsEditor.setValue(injectionData.jsCode);
 			cssEditor.setValue(injectionData.cssCode);
 			externalCSSEditor.setValue(injectionData.cssURLs.join("\n"));
+			injectDomainNode.value = injectionData.domain;
+			currentInjectionData = injectionData;
 		});
 	}
 
 	function saveEditorContent()
 	{
-		dataStorage.save(new InjectedData(cssEditor.getValue(), jsEditor.getValue(), externalCSSEditor.getValue().split(/\s*\n\s*/)));
+		let newDomain = injectDomainNode.value;
+		// If domain is changed, remove data for the old domain
+		if (currentInjectionData && currentInjectionData.domain !== newDomain)
+		{
+			dataStorage.remove(currentInjectionData.domain);
+		}
+		let injectionData = new InjectedData(
+			newDomain,
+			cssEditor.getValue(), jsEditor.getValue(), externalCSSEditor.getValue().split(/\s*\n\s*/));
+		currentInjectionData = injectionData;
+		dataStorage.save(injectionData);
 	}
 
 	function injectCSS()

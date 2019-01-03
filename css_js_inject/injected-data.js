@@ -2,11 +2,12 @@
 {
 	class InjectedData
 	{
-		constructor(cssCode, jsCode, cssURLs)
+		constructor(domain, cssCode, jsCode, cssURLs)
 		{
-			this.cssCode = cssCode;
-			this.jsCode = jsCode;
-			this.cssURLs = cssURLs;			
+			this.domain = domain;
+			this.cssCode = cssCode ? cssCode : "";
+			this.jsCode = jsCode ? jsCode : "";
+			this.cssURLs = cssURLs ? cssURLs : [];	
 		}
 
 		serialize()
@@ -14,13 +15,16 @@
 			return {
 				cssInjection: this.cssCode,
 				jsInjection: this.jsCode,
-				externalCssInjection: this.cssURLs 
+				externalCssInjection: this.cssURLs,
+				domain: this.domain
 			}
 		}
 
-		static deserialize(serializedData)
+		static deserialize(key, serializedData)
 		{
-			return new InjectedData(serializedData.cssInjection, serializedData.jsInjection, serializedData.externalCssInjection);
+			return new InjectedData(
+				key,
+				serializedData.cssInjection, serializedData.jsInjection, serializedData.externalCssInjection);
 		}
 	}
 

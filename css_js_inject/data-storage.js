@@ -21,6 +21,11 @@
 			data[key] = value;
 			chrome.storage.sync.set(data);
 		}
+
+		remove(key)
+		{
+			chrome.storage.sync.remove(key)
+		}
 	}
 
 	window.DataStorage = DataStorage;

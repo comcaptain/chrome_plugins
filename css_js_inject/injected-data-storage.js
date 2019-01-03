@@ -32,15 +32,20 @@ class InjectedDataStorage
 			for (let key of allKeys)
 			{
 				if (!wildcardMatch(key, hostName)) continue;
-				return this.dataStorage.load(key).then(value => InjectedData.deserialize(value));
+				return this.dataStorage.load(key).then(value => InjectedData.deserialize(key, value));
 			}
-			return null;
+			return new InjectedData(hostName);
 		})
+	}
+
+	remove(key)
+	{
+		this.dataStorage.remove(key);
 	}
 
 	save(injectedData)
 	{
-		this.dataStorage.save(getHostName(), injectedData.serialize())
+		this.dataStorage.save(injectedData.domain, injectedData.serialize())
 	}
 }
 
