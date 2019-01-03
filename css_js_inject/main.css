@@ -1,13 +1,6 @@
-#container {
+#js-editor, #css-editor, #external-css-editor {
 	width: 500px;
-	height: 330px;
-}
-#js-editor, #css-editor, #external-css-editor { 
-	position: absolute;
-	top: 38px;
-	left: 5px;
-    width: 500px;
-    height: 300px;
+	height: 300px;
 }
 
 #js-editor, #external-css-editor {
@@ -17,8 +10,6 @@ ul.tabs {
 	list-style: none;
 	padding: 0;
 	margin: 0;
-	position: relative;
-	left: -3px;
 }
 ul.tabs li {
 	display: inline-block;
@@ -37,4 +28,21 @@ ul.tabs li.selected {
 	background: #2F3129;;
 	color: white;
 	cursor: default;
+}
+
+body, html {
+	height: 354px;
+}
+
+#domain-container {
+	margin-bottom: 5px;
+}
+
+#domain-label {
+	font-weight: bold;
+	margin-right: 5px;
+}
+
+#domain {
+	width: 292px;
 }
