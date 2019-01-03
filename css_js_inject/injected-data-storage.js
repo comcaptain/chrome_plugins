@@ -10,13 +10,6 @@ function wildcardMatch(find, source)
 	return regEx.test(source);
 }
 
-function getHostName()
-{
-	var url = window.location.href;
-	if (window.tab && window.tab.url) url = tab.url;
-	return url.match(/[^\/]+\/\/[^\/]+/)[0];
-}
-
 class InjectedDataStorage
 {
 	constructor(dataStorage)
@@ -26,7 +19,7 @@ class InjectedDataStorage
 
 	load()
 	{
-		let hostName = getHostName();
+		let hostName = InjectedDataStorage.getCurrentDomain();
 		return this.dataStorage.loadAllKeys().then(allKeys =>
 		{
 			for (let key of allKeys)
@@ -46,6 +39,13 @@ class InjectedDataStorage
 	save(injectedData)
 	{
 		this.dataStorage.save(injectedData.domain, injectedData.serialize())
+	}
+
+	static getCurrentDomain()
+	{
+		var url = window.location.href;
+		if (window.tab && window.tab.url) url = tab.url;
+		return url.match(/[^\/]+\/\/[^\/]+/)[0];
 	}
 }
 

@@ -71,6 +71,15 @@
 		});		
 	}
 
+	function activateResetButton()
+	{
+		document.querySelector("#reset-button").addEventListener("click", function()
+		{
+			injectDomainNode.value = InjectedDataStorage.getCurrentDomain();
+			saveEditorContent();
+		})
+	}
+
 	function redrawEditor(editor)
 	{
 		editor.resize();
@@ -90,6 +99,7 @@
 			{
 				activateTabSwitch();
 				activateAutoSave();
+				activateResetButton();
 			});
 		})
 	})

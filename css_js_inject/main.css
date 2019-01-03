@@ -48,5 +48,16 @@ body, html {
 }
 
 #domain {
-	width: 292px;
+	width: 271px;
+}
+
+#reset-button {
+    background-image: url(reset.svg);
+    background-size: contain;
+    height: 18px;
+    width: 18px;
+    border: none;
+    cursor: pointer;
+    vertical-align: -2px;
+    outline: none;
 }
