@@ -4,7 +4,8 @@
 	"description": "Build an Extension!",
 	"permissions": [
 		"storage",
-		"declarativeContent"
+		"declarativeContent",
+		"activeTab"
 	],
 	"background": {
 		"scripts": [
