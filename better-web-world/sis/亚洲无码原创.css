@@ -1,0 +1,37 @@
+#sgq-thread img {
+	height: calc(100vh - 40px);
+	display: block;
+	margin: 0 auto;
+}
+
+#sgq-thread {
+	position: relative;
+	background: white;
+	padding-top: 5px;
+	font-size: 16px;
+}
+
+#sgq-thread #header {
+	text-align: center;
+}
+
+#sgq-thread #meta-data {
+	left: 10px;
+	top: 5px;
+	position: absolute;
+}
+
+#sgq-thread .thread-metadata {
+	display: inline-block;
+}
+
+#sgq-thread .thread-metadata, #sgq-thread .title {
+	border: 1px dashed silver;
+	padding: 3px 8px;
+	border-radius: 5px;
+}
+
+#sgq-thread .title {
+	display: inline-block;
+	margin-bottom: 5px;
+}
