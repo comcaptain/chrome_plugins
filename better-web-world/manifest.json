@@ -1,0 +1,19 @@
+{
+	"name": "Better Web World",
+	"version": "1.0",
+	"description": "Do customizations on web pages. Make the web world look better for me",
+	"content_scripts": [
+		{
+			"matches": [
+				"http://www.sexinsex.net/bbs/forum-143-*.html"
+			],
+			"css": [
+				"sis/亚洲无码原创.css"
+			],
+			"js": [
+				"sis/亚洲无码原创.js"
+			]
+		}
+	],
+	"manifest_version": 2
+}
