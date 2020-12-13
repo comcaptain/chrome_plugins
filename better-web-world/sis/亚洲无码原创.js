@@ -73,6 +73,38 @@ function isBrokenImage(imageURL)
 }
 
 
+async function nextThread()
+{
+	if (threadIndex < links.length - 1)
+	{
+		threadIndex++;
+		imageIndex = 0;
+		threadDetail = null;
+	}
+	else
+	{
+		return;
+	}
+	refreshThreadDetail();
+}
+
+
+async function prevThread()
+{
+	if (threadIndex > 0)
+	{
+		threadIndex--;
+		imageIndex = 0;
+		threadDetail = null;
+	}
+	else
+	{
+		return;
+	}
+	refreshThreadDetail();
+}
+
+
 async function nextImage()
 {
 	if (imageIndex < threadDetail.images.length - 1)
@@ -119,15 +151,13 @@ function bindListeners()
 		e.stopPropagation();
 		if (e.key === 'ArrowRight')
 		{
-			nextImage();
+			if (e.ctrlKey) nextThread();
+			else nextImage();
 		}
 		else if (e.key === 'ArrowLeft')
 		{
-			prevImage();
-		}
-		else if (e.key === 'ArrowLeft')
-		{
-			prevImage();
+			if (e.ctrlKey) prevThread();
+			else prevImage();
 		}
 		else if (e.key === 'd')
 		{
