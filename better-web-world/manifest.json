@@ -5,7 +5,8 @@
 	"content_scripts": [
 		{
 			"matches": [
-				"http://www.sexinsex.net/bbs/forum-143-*.html"
+				"http://www.sexinsex.net/bbs/forum-143-*.html",
+				"http://www.sexinsex.net/bbs/forumdisplay.php?fid=143&page=*"
 			],
 			"css": [
 				"sis/亚洲无码原创.css"

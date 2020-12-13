@@ -13,17 +13,25 @@ function getThreadLinks()
 
 class ThreadDetail
 {
-	constructor(title, torrentURL, images, index)
+	constructor(title, torrentURL, images)
 	{
 		this.title = title;
 		this.torrentURL = torrentURL;
 		this.images = images;
-		this.index = index;
 	}
 }
 
-function refreshThreadDetail(threadDetail, threadCount, imageIndex)
+let links = [];
+let threadIndex = 0;
+let imageIndex = 0;
+let threadDetail = null;
+
+async function refreshThreadDetail()
 {
+	if (!threadDetail)
+	{
+		threadDetail = await crawlThreadDetail();
+	}
 	let container = document.getElementById("sgq-thread");
 	if (container == null)
 	{
@@ -35,7 +43,7 @@ function refreshThreadDetail(threadDetail, threadCount, imageIndex)
 		<div id="header">
 			<div id="meta-data">
 				<span class="thread-metadata" id="page-number">第1页</span>
-				<span class="thread-metadata" id="thread-index">帖子: ${threadDetail.index + 1}/${threadCount}</span>
+				<span class="thread-metadata" id="thread-index">帖子: ${threadIndex + 1}/${links.length}</span>
 				<span class="thread-metadata" id="image-index">图片: ${imageIndex + 1}/${threadDetail.images.length}</span>
 			</div>
 			<span class="title">${threadDetail.title}</span>
@@ -43,26 +51,103 @@ function refreshThreadDetail(threadDetail, threadCount, imageIndex)
 		<img src="${threadDetail.images[imageIndex]}">`
 }
 
-async function crawlThreadDetail(links, linkIndex)
+function isBrokenImage(imageURL)
 {
-	const link = links[linkIndex];
+	return new Promise(resolve =>
+	{
+		const img = document.createElement("img");
+		img.setAttribute("src", imageURL);
+		img.addEventListener("error", e =>
+		{
+			resolve(null);
+		});
+		img.addEventListener("load", e =>
+		{
+			resolve(imageURL);
+		});
+		img.style.display = "none";
+		document.body.appendChild(img);
+		document.body.removeChild(img);
+	})
+}
+
+
+async function nextImage()
+{
+	if (imageIndex < threadDetail.images.length - 1)
+	{
+		imageIndex++;
+	}
+	else if (threadIndex < links.length - 1)
+	{
+		threadIndex++;
+		imageIndex = 0;
+	}
+	else
+	{
+		return;
+	}
+	threadDetail = null;
+	refreshThreadDetail();
+}
+
+async function prevImage()
+{
+	if (imageIndex > 0)
+	{
+		imageIndex--;
+	}
+	else if (threadIndex > 0)
+	{
+		threadIndex--;
+		imageIndex = 0;
+	}
+	else
+	{
+		return;
+	}
+	threadDetail = null;
+	refreshThreadDetail();
+}
+
+function bindListeners()
+{
+	document.body.addEventListener("keyup", async e =>
+	{
+		// This is to disable the listener on screen
+		e.stopPropagation();
+		if (e.key === 'ArrowRight')
+		{
+			nextImage();
+		}
+		else if (e.key === 'ArrowLeft')
+		{
+			prevImage();
+		}
+	});
+}
+
+async function crawlThreadDetail()
+{
+	const link = links[threadIndex];
 	const data = await fetch(link.getAttribute("href"));
 	const html = await data.text();
 	const doc = new DOMParser().parseFromString(html, "text/html");
 	const subjectDOM = doc.querySelector(COMMENT_BOX_SELECTOR);
+	const images = [].slice.apply(subjectDOM.querySelectorAll(MAIN_SUBJECT_IMAGES_SELECTOR)).map(i => i.getAttribute("src"));
+	const verifiedImages = await Promise.all(images.map(image => isBrokenImage(image)));
 	return new ThreadDetail(
 		link.textContent,
 		doc.querySelector(TORRENT_DOWNLOAD_LINK_SELECTOR).getAttribute("href"),
-		[].slice.apply(subjectDOM.querySelectorAll(MAIN_SUBJECT_IMAGES_SELECTOR)).map(i => i.getAttribute("src")),
-		linkIndex
+		verifiedImages.filter(image => image)
 	);
 }
 
 async function beautify()
 {
-	const links = getThreadLinks();
-	const detail = await crawlThreadDetail(links, 0);
-	refreshThreadDetail(detail, links.length, 0);
+	links = getThreadLinks();
+	refreshThreadDetail();
+	bindListeners();
 }
 
 beautify();
