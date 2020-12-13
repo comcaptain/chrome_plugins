@@ -22,8 +22,8 @@ class ThreadDetail
 }
 
 let links = [];
-let threadIndex = 4;
-let imageIndex = 1;
+let threadIndex = 11;
+let imageIndex = 0;
 let threadDetail = null;
 
 async function refreshThreadDetail()
@@ -49,6 +49,7 @@ async function refreshThreadDetail()
 			<span class="title">${threadDetail.title}</span>
 		</div>
 		<img class="sgq-image" src="${threadDetail.images[imageIndex]}">`
+	window.scrollTo(0, 0);
 }
 
 function isBrokenImage(imageURL)
@@ -152,7 +153,10 @@ async function crawlThreadDetail()
 	const html = await data.text();
 	const doc = new DOMParser().parseFromString(html, "text/html");
 	const subjectDOM = doc.querySelector(COMMENT_BOX_SELECTOR);
-	const images = [].slice.apply(subjectDOM.querySelectorAll(MAIN_SUBJECT_IMAGES_SELECTOR)).map(i => i.getAttribute("src"));
+	const images = [].slice.apply(subjectDOM.querySelectorAll(MAIN_SUBJECT_IMAGES_SELECTOR))
+		// 去掉引用中的图片
+		.filter(i => i.closest("blockquote") == null)
+		.map(i => i.getAttribute("src"));
 	const verifiedImages = await Promise.all(images.map(image => isBrokenImage(image)));
 	return new ThreadDetail(
 		link.textContent,
