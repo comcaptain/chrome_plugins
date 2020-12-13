@@ -22,7 +22,7 @@ class ThreadDetail
 }
 
 let links = [];
-let threadIndex = 11;
+let threadIndex = 16;
 let imageIndex = 0;
 let threadDetail = null;
 
@@ -83,12 +83,12 @@ async function nextImage()
 	{
 		threadIndex++;
 		imageIndex = 0;
+		threadDetail = null;
 	}
 	else
 	{
 		return;
 	}
-	threadDetail = null;
 	refreshThreadDetail();
 }
 
@@ -102,12 +102,12 @@ async function prevImage()
 	{
 		threadIndex--;
 		imageIndex = 0;
+		threadDetail = null;
 	}
 	else
 	{
 		return;
 	}
-	threadDetail = null;
 	refreshThreadDetail();
 }
 
