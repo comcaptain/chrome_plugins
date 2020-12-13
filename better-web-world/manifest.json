@@ -15,5 +15,10 @@
 			]
 		}
 	],
+	"background": {
+		"scripts": [
+			"hot-reload.js"
+		]
+	},
 	"manifest_version": 2
 }
