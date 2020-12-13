@@ -22,5 +22,6 @@
 			"128": "images/get_started128.png"
 		}
 	},
+	"options_page": "options.html",
 	"manifest_version": 2
 }
