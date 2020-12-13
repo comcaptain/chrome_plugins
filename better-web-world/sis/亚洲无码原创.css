@@ -6,6 +6,12 @@
 	margin: 0 auto;
 }
 
+#sgq-thread img.enlarged {	
+	width: calc(100vw - 30px);
+	object-fit: cover;
+	height: auto;
+}
+
 #sgq-thread {
 	position: relative;
 	background: white;

@@ -22,8 +22,8 @@ class ThreadDetail
 }
 
 let links = [];
-let threadIndex = 0;
-let imageIndex = 0;
+let threadIndex = 4;
+let imageIndex = 1;
 let threadDetail = null;
 
 async function refreshThreadDetail()
@@ -48,7 +48,7 @@ async function refreshThreadDetail()
 			</div>
 			<span class="title">${threadDetail.title}</span>
 		</div>
-		<img src="${threadDetail.images[imageIndex]}">`
+		<img class="sgq-image" src="${threadDetail.images[imageIndex]}">`
 }
 
 function isBrokenImage(imageURL)
@@ -137,6 +137,12 @@ function bindListeners()
 			window.open(links[threadIndex])
 		}
 	});
+	document.addEventListener("click", event =>
+	{
+		const classList = event.target.classList;
+		if (!classList.contains("sgq-image")) return;
+		classList.add("enlarged");
+	})
 }
 
 async function crawlThreadDetail()
