@@ -124,6 +124,18 @@ function bindListeners()
 		{
 			prevImage();
 		}
+		else if (e.key === 'ArrowLeft')
+		{
+			prevImage();
+		}
+		else if (e.key === 'd')
+		{
+			window.location.href = threadDetail.torrentURL;
+		}
+		else if (e.key === 'g')
+		{
+			window.open(links[threadIndex])
+		}
 	});
 }
 
