@@ -14,6 +14,17 @@
 			"js": [
 				"sis/亚洲无码原创.js"
 			]
+		},
+		{
+			"matches": [
+				"https://kintai.basenet.co.jp/basekin/WMMN0101a.cfm"
+			],
+			"css": [
+				"kindai/kindai.css"
+			],
+			"js": [
+				"kindai/kindai.js"
+			]
 		}
 	],
 	"background": {
