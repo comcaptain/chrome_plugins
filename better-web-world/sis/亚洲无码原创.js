@@ -22,7 +22,7 @@ class ThreadDetail
 }
 
 let links = [];
-let threadIndex = 16;
+let threadIndex = 0;
 let imageIndex = 0;
 let threadDetail = null;
 
@@ -188,9 +188,14 @@ async function crawlThreadDetail()
 		.filter(i => i.closest("blockquote") == null)
 		.map(i => i.getAttribute("src"));
 	const verifiedImages = await Promise.all(images.map(image => isBrokenImage(image)));
+	const downloadLink = doc.querySelector(TORRENT_DOWNLOAD_LINK_SELECTOR);
+	if (downloadLink == null)
+	{
+		alert("Do download link");
+	}
 	return new ThreadDetail(
 		link.textContent,
-		doc.querySelector(TORRENT_DOWNLOAD_LINK_SELECTOR).getAttribute("href"),
+		downloadLink === null ? "" : downloadLink.getAttribute("href"),
 		verifiedImages.filter(image => image)
 	);
 }
