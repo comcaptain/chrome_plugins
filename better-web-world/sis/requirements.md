@@ -1,0 +1,5 @@
+- Preload next page
+- Show loading icon when loading images
+- Previous image should go to last image of the page
+- Get real picture. e.g. http://www.sexinsex.net/bbs/forum-143-7.html
+- Exclude visited links. Visited should be explicitly marked by pressing a button, e.g. s for skip. It would go to next thread and mark it as visisted. Download would also mark it as visited
