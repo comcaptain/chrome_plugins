@@ -17,6 +17,10 @@ body
 	position: relative;
 }
 
+#time-machine .hidden {
+	display: none;
+}
+
 #historical-threads
 {
 	list-style: none;
@@ -53,7 +57,16 @@ body
     border-radius: 5px;
 }
 
-#jump-to-next-page
+#time-machine-controller {
+	position: absolute;
+    top: 0;
+	line-height: 20px;
+	left: 905px;
+	line-height: 27px;
+	width: 200px;
+}
+
+#time-machine-controller button
 {
 	background: #89bd90;
     border: none;
@@ -62,10 +75,30 @@ body
     padding: 5px 10px;
     border-radius: 5px;
 	color: white;
-	position: absolute;
-    top: 0;
-    right: -65px;
+}
+
+#time-machine-controller > * {
+	display: block;
+    margin-bottom: 5px;
     line-height: 20px;
+}
+
+#time-travel-target {
+	border-radius: 5px;
+    outline: none;
+    border: 1px solid silver;
+    text-indent: 3px;
+    font-size: 16px;
+    line-height: 28px;
+    width: 100px;
+}
+
+#time-travel-target-previewer {
+	position: absolute;
+    left: 110px;
+    top: 38px;
+    width: 300px;
+    border-radius: 5px;
 }
 
 #time-machine-status {
