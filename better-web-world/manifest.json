@@ -25,6 +25,17 @@
 			"js": [
 				"kindai/kindai.js"
 			]
+		},
+		{
+			"matches": [
+				"http://lkong.cn/"
+			],
+			"css": [
+				"lkong/lkong.css"
+			],
+			"js": [
+				"lkong/lkong.js"
+			]
 		}
 	],
 	"background": {
