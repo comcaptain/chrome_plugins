@@ -1,0 +1,86 @@
+body > *
+{
+	display: none;
+}
+
+body
+{
+	background: none!important;
+}
+
+#time-machine
+{
+	margin: 0 auto;
+	width: 900px;
+	display: block;
+	font-family: "微软雅黑";
+	position: relative;
+}
+
+#historical-threads
+{
+	list-style: none;
+	padding: 0;
+}
+
+#historical-threads > li
+{
+	line-height: 30px;
+    margin-top: 5px;
+}
+
+#historical-threads > li:nth-child(even) a
+{
+    background: #fff8e7;
+}
+
+#historical-threads > li:nth-child(odd) a
+{
+    background: #f5e8cb;
+}
+
+#historical-threads a:hover
+{
+    background: #ffeaaa!important;
+}
+
+#historical-threads a
+{
+    color: black;
+    text-decoration: none;
+    display: block;
+    padding-left: 9px;
+    border-radius: 5px;
+}
+
+#jump-to-next-page
+{
+	background: #89bd90;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+	color: white;
+	position: absolute;
+    top: 0;
+    right: -65px;
+    line-height: 20px;
+}
+
+#time-machine-status {
+	position: absolute;
+	left: -182px;
+    top: 0;
+}
+
+#time-machine-status > * {
+	display: block;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    background: rgb(137, 189, 144);
+    color: white;
+    border-radius: 5px;
+    line-height: 20px;
+    border: none;
+}
