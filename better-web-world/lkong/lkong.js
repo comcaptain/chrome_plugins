@@ -194,6 +194,12 @@ function bindListeners(container)
 		if (!event.target.classList.contains("thread-link")) return;
 		if (event.ctrlKey) return;
 		event.preventDefault();
+		const aNode = event.target;
+		aNode.closest("#historical-threads").querySelectorAll(".thread-link").forEach(node =>
+		{
+			if (node == aNode) node.classList.add("active");
+			else node.classList.remove("active");
+		});
 		renderThreadContent(await getThreadData(event.target.getAttribute("thread-id")));
 	})
 }

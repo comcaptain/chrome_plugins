@@ -62,9 +62,10 @@ body
     background: #f5e8cb;
 }
 
-#historical-threads a:hover
+#historical-threads .thread-link:hover
 {
-    background: #ffeaaa!important;
+    background: #ffeaaa;
+	color: black;
 }
 
 #historical-threads a
@@ -133,22 +134,25 @@ body
 	list-style: none;
 	padding: 0;
 	margin: 0;
+	border: 1px solid #89bd90;
+    border-radius: 10px;
 }
 
 #time-machine #thread-detail > li
 {
-    border: 1px solid #89bd90;
-    border-radius: 10px;
-    margin-bottom: 10px;
     padding: 5px 10px;
     position: relative;
-    padding-top: 33px;
+    border-bottom: 1px solid green;
+    margin-bottom: 0;
+    padding-top: 35px;
+    padding-bottom: 20px;
 }
 
 #time-machine .comment-status 
 {
 	position: absolute;
-	top: 0;
+	top: -1px;
+    font-size: 12px;
 }
 
 #time-machine .comment-status > span
@@ -160,4 +164,13 @@ body
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     color: white;
+}
+
+#time-machine .thread-link.active, #time-machine .thread-link.active:hover
+{
+	background: #89bd90;
+    color: white;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+	width: calc(100% - 4px);
 }
