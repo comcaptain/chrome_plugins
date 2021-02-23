@@ -167,7 +167,29 @@ function bindListeners(container)
 			previewNode.textContent = error;
 			previewNode.classList.add("error");
 		}
-	})
+	});
+	container.querySelector("#random-time-travel").addEventListener("click", e => randomTimeTravel());
+}
+
+/**
+ * @param {String} forumID Optional parameter
+ */
+function randomTimeTravel(forumID)
+{
+	const startTimeInMillis = new Date("2012-01-01").getTime();
+	const yearsBeforeNow = 3;
+	const endTimeInMillis = new Date().getTime() - yearsBeforeNow * 365 * 24 * 3600 * 1000;
+	const targetTime = new Date(startTimeInMillis + parseInt((endTimeInMillis - startTimeInMillis) * Math.random()));
+	timeTravel(formatDate(targetTime), forumID);
+}
+
+/**
+ * @param date A js Date object
+ */
+function formatDate(date)
+{
+	return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" + ("0" + date.getDate()).slice(-2) + " " +
+		("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2) + ":" + ("0" + date.getSeconds()).slice(-2);
 }
 
 function renderThreads(pageData)
@@ -188,6 +210,7 @@ function renderThreads(pageData)
 			<div id="time-machine-controller">
 				<button id="jump-to-next-page">下一页</button>
 				<button id="time-travel">切换时间</button>
+				<button id="random-time-travel" title="穿越到2012到3年之前的任意时间点">随机穿越</button>
 				<input type="text" placeholder="130712 22" id="time-travel-target" class="hidden" />
 				<span id="time-travel-target-previewer" class="hidden" />
 			</div>`;
@@ -210,6 +233,9 @@ function renderThreads(pageData)
 	container.querySelector("#time-machine-status .count").textContent = pageData.threads.length + "个帖子";
 }
 
+/**
+ * @param {*} targetTime A string whose format is 2013-07-12 19:00:00
+ */
 async function timeTravel(targetTime, forumID)
 {
 	if (!forumID) forumID = window.forumID;
@@ -218,4 +244,4 @@ async function timeTravel(targetTime, forumID)
 	renderThreads(pageData);
 }
 
-timeTravel("2013-07-12 19:00:00", "60");
+randomTimeTravel("60");
