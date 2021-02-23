@@ -228,19 +228,17 @@ function renderThreads(pageData)
 		container.id = "time-machine";
 		document.body.appendChild(container);
 		container.innerHTML = `
-			<div id="time-machine-status">
-				<span class="start-time"></span>
-				<span class="count"></span>
+			<div id="time-machine-side-bar">
+				<span class="side-bar-item start-time"></span>
+				<span class="side-bar-item count"></span>
+				<button class="side-bar-item" id="jump-to-next-page">下一页</button>
+				<button class="side-bar-item" id="time-travel">切换时间</button>
+				<input type="text" placeholder="130712 22" id="time-travel-target" class="hidden side-bar-item" />
+				<button class="side-bar-item" id="random-time-travel" title="穿越到2012到3年之前的任意时间点">随机穿越</button>
+				<span id="time-travel-target-previewer" class="hidden" />
 			</div>
 			<ul id="historical-threads">
-			</ul>
-			<div id="time-machine-controller">
-				<button id="jump-to-next-page">下一页</button>
-				<button id="time-travel">切换时间</button>
-				<button id="random-time-travel" title="穿越到2012到3年之前的任意时间点">随机穿越</button>
-				<input type="text" placeholder="130712 22" id="time-travel-target" class="hidden" />
-				<span id="time-travel-target-previewer" class="hidden" />
-			</div>`;
+			</ul>`;
 		bindListeners(container);
 	}
 	const threadsContainer = container.querySelector("#historical-threads");
@@ -256,8 +254,8 @@ function renderThreads(pageData)
 	{
 		nextButton.style.display = "none";
 	}
-	container.querySelector("#time-machine-status .start-time").textContent = pageData.time;
-	container.querySelector("#time-machine-status .count").textContent = pageData.threads.length + "个帖子";
+	container.querySelector("#time-machine-side-bar .start-time").textContent = pageData.time;
+	container.querySelector("#time-machine-side-bar .count").textContent = pageData.threads.length + "个帖子";
 }
 
 /**
