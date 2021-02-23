@@ -194,7 +194,7 @@ function bindListeners(container)
 		if (!event.target.classList.contains("thread-link")) return;
 		if (event.ctrlKey) return;
 		event.preventDefault();
-		console.info(await getThreadData(event.target.getAttribute("thread-id")));
+		renderThreadContent(await getThreadData(event.target.getAttribute("thread-id")));
 	})
 }
 
@@ -219,6 +219,22 @@ function formatDate(date)
 		("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2) + ":" + ("0" + date.getSeconds()).slice(-2);
 }
 
+/**
+ * 
+ * @param {Array} threadComments return value of getThreadData method
+ */
+function renderThreadContent(threadComments)
+{
+	const container = document.querySelector("#time-machine #thread-detail");
+	container.innerHTML = threadComments.map(c => `<li>
+		<div class="comment-status">
+			<span class="author">${c.author}</span>
+			<span class="thread-time">${c.time}</span>
+		</div>
+		<div class="content">${c.content}</div>
+	</li>`).join("\n");
+}
+
 function renderThreads(pageData)
 {
 	let container = document.querySelector("#time-machine");
@@ -228,17 +244,20 @@ function renderThreads(pageData)
 		container.id = "time-machine";
 		document.body.appendChild(container);
 		container.innerHTML = `
+		<div class="left-part">
 			<div id="time-machine-side-bar">
 				<span class="side-bar-item start-time"></span>
 				<span class="side-bar-item count"></span>
 				<button class="side-bar-item" id="jump-to-next-page">下一页</button>
+				<button class="side-bar-item" id="random-time-travel" title="穿越到2012到3年之前的任意时间点">随机穿越</button>
 				<button class="side-bar-item" id="time-travel">切换时间</button>
 				<input type="text" placeholder="130712 22" id="time-travel-target" class="hidden side-bar-item" />
-				<button class="side-bar-item" id="random-time-travel" title="穿越到2012到3年之前的任意时间点">随机穿越</button>
-				<span id="time-travel-target-previewer" class="hidden" />
+				<span id="time-travel-target-previewer" class="hidden side-bar-item"></span>
 			</div>
 			<ul id="historical-threads">
-			</ul>`;
+			</ul>
+		</div>
+		<div class="right-part"><ul id="thread-detail"></ul></div>`;
 		bindListeners(container);
 	}
 	const threadsContainer = container.querySelector("#historical-threads");

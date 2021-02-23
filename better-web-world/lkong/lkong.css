@@ -10,14 +10,32 @@ body
 
 #time-machine
 {
-	margin: 0 auto;
-	width: 900px;
 	display: block;
 	font-family: "微软雅黑";
-	position: relative;
+	display: flex;
+	height: 100%;
+	margin-top: 7px;
 }
 
-#time-machine .hidden {
+#time-machine > .left-part
+{
+	margin-left: 190px;
+	width: 600px;
+	position: relative;
+	flex-shrink: 0;
+}
+
+#time-machine > .right-part
+{
+	flex-grow: 1;
+	border-radius: 5px;
+	margin-left: 5px;
+	overflow-y: auto;
+	height: calc(100vh - 10px);
+}
+
+#time-machine .hidden
+{
 	display: none!important;
 }
 
@@ -25,6 +43,7 @@ body
 {
 	list-style: none;
 	padding: 0;
+	margin-top: -5px;
 }
 
 #historical-threads > li
@@ -81,13 +100,13 @@ body
 	padding: 0;
 }
 
-#time-travel-target-previewer {
-	position: absolute;
-	right: 109px;
-    text-align: right;
-    top: 109px;
-    width: 300px;
+#time-machine-side-bar #time-travel-target-previewer {
+    width: 158px;
     border-radius: 5px;
+	background: white;
+    color: black;
+    border: 1px dashed silver;
+	min-height: 20px;
 }
 
 #time-machine-side-bar {
@@ -107,4 +126,38 @@ body
     border: none;
 	float: right;
 	clear: both;
+}
+
+#time-machine #thread-detail
+{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+#time-machine #thread-detail > li
+{
+    border: 1px solid #89bd90;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    position: relative;
+    padding-top: 33px;
+}
+
+#time-machine .comment-status 
+{
+	position: absolute;
+	top: 0;
+}
+
+#time-machine .comment-status > span
+{
+    background: #89bd90;
+    padding: 3px 5px;
+    float: left;
+    margin-right: 10px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    color: white;
 }
