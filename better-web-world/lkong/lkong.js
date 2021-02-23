@@ -239,6 +239,7 @@ function renderThreadContent(threadComments)
 		</div>
 		<div class="content">${c.content}</div>
 	</li>`).join("\n");
+	document.querySelector("#time-machine > .right-part").scrollTop = 0;
 }
 
 function renderThreads(pageData)
