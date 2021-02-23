@@ -192,6 +192,7 @@ function bindListeners(container)
 	container.addEventListener("click", async function (event)
 	{
 		if (!event.target.classList.contains("thread-link")) return;
+		if (event.ctrlKey) return;
 		event.preventDefault();
 		console.info(await getThreadData(event.target.getAttribute("thread-id")));
 	})
