@@ -2,7 +2,7 @@
  * @param targetTime String format of target time. Should be compatible with Date constructor
  * @param forumID ID of the forum, you can get it from forum's URL
  * 
- * @returns Thread list and next page's time stamp. e.g. {threads: [{title: "abc", url: "https://xxxxx"}], next: "2012-06-12 22:00", forumID: "20"}
+ * @returns Thread list and next page's time stamp. e.g. {threads: [{title: "abc", url: "https://xxxxx", id: "856697"}], next: "2012-06-12 22:00", forumID: "20"}
  */
 async function getPageData(targetTime, forumID)
 {
@@ -18,7 +18,8 @@ async function getPageData(targetTime, forumID)
 	{
 		const title = d.subject.replace(/.*>(.*)<.*/, "$1");
 		const url = `http://lkong.cn/thread/${d.id.replace("thread_", "")}`;
-		return { title, url };
+		const id = d.id.replace("thread_", "");
+		return { title, url, id };
 	});
 	const result = { time: targetTime, threads, forumID };
 	if (dataList.length > 0)
@@ -26,6 +27,25 @@ async function getPageData(targetTime, forumID)
 		result.next = dataList[0].dateline;
 	}
 	return result;
+}
+
+/**
+ * Send ajax to get one thread's data
+ * 
+ * @param {String} threadID ID of the thread. e.g. For ajax response data in `getPageData`, there is one field for each thread: id, one example of id value is: thread_856697, then 856697 is the id
+ * 
+ * @returns [{author: "大圣欢喜天", time: "2013-10-09 21:13:21", content: "<p>  \t咦，发现小唐唐了……来（逗猫棒）<img src=\"http://img.lkong.cn/bq/em51.gif\" em=\"51\">  </p> "}]
+ */
+async function getThreadData(threadID)
+{
+	const url = `http://lkong.cn/index.php?mod=data&sars=thread/${threadID}&_=1614081864714`;
+	const response = await fetch(url);
+	const jsonData = await response.json();
+	return jsonData.data.map(t => ({
+		author: t.author,
+		time: t.dateline,
+		content: t.message
+	}));
 }
 
 const defaultMonth = "07";
@@ -169,6 +189,12 @@ function bindListeners(container)
 		}
 	});
 	container.querySelector("#random-time-travel").addEventListener("click", e => randomTimeTravel());
+	container.addEventListener("click", async function (event)
+	{
+		if (!event.target.classList.contains("thread-link")) return;
+		event.preventDefault();
+		console.info(await getThreadData(event.target.getAttribute("thread-id")));
+	})
 }
 
 /**
@@ -217,7 +243,7 @@ function renderThreads(pageData)
 		bindListeners(container);
 	}
 	const threadsContainer = container.querySelector("#historical-threads");
-	threadsContainer.innerHTML = pageData.threads.map(t => `<li><a href="${t.url}" target="_blank">${t.title}</a></li>`).join("\n");
+	threadsContainer.innerHTML = pageData.threads.map(t => `<li><a href="${t.url}" target="_blank" class="thread-link" thread-id="${t.id}">${t.title}</a></li>`).join("\n");
 	const nextButton = container.querySelector("#jump-to-next-page");
 	if (pageData.next)
 	{
