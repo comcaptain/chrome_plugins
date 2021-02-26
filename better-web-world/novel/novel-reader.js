@@ -65,6 +65,7 @@ class NovelReader
 	{
 		this.chapters = this.crawler.crawlChapterLinks();
 		await this.initHTMLNodes();
+		await this.jumpToChapter(0);
 	}
 
 	async initHTMLNodes()
@@ -79,7 +80,7 @@ class NovelReader
 		container.id = "novel-reader";
 		document.body.appendChild(container);
 		container.innerHTML = `
-		<div id="chapters">${this.renderChapterHTML(firstChapter)}</div>
+		<div id="chapters"></div>
 		<div id="category">
 			<button class="side-button" id="menuButton" style="background-image: url(${chrome.extension.getURL("novel/background.png")});">目录</button>
 			<div id="category-dialog">
@@ -101,7 +102,7 @@ class NovelReader
 		</div>`;
 	}
 
-	async jumpToPage(chapterIndex)
+	async jumpToChapter(chapterIndex)
 	{
 		// Render 2 chapters
 		let chaptersHTML = ""
@@ -112,6 +113,19 @@ class NovelReader
 			chaptersHTML += this.renderChapterHTML(chapter);
 		}
 		document.querySelector("#chapters").innerHTML = chaptersHTML;
+		this.chapterIndex = chapterIndex - 1;
+		document.documentElement.scrollTop = 0;
+	}
+
+	async loadNextChapter()
+	{
+		if (this.loading) return;
+		this.loading = true;
+		const chapter = this.chapters[++this.chapterIndex];
+		await this.crawler.crawlChapterContent(chapter);
+		const chapterNode = new DOMParser().parseFromString(this.renderChapterHTML(chapter), "text/html").querySelector(".chapter");
+		document.querySelector("#chapters").appendChild(chapterNode);
+		this.loading = false;
 	}
 
 	closeMenu()
@@ -140,8 +154,14 @@ class NovelReader
 		{
 			if (!event.target.classList.contains("chapter-name")) return;
 			this.closeMenu();
-			this.jumpToPage(parseInt(event.target.getAttribute("index")));
+			this.jumpToChapter(parseInt(event.target.getAttribute("index")));
 		});
+		const chaptersNode = document.querySelector("#chapters");
+		document.addEventListener("scroll", () =>
+		{
+			const scrollContainer = document.documentElement;
+			if (chaptersNode.scrollHeight - scrollContainer.scrollTop - window.innerHeight < 1000) this.loadNextChapter();
+		})
 	}
 }
 
