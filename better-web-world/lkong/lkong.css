@@ -31,7 +31,11 @@ body
 	border-radius: 5px;
 	margin-left: 5px;
 	overflow-y: auto;
-	height: calc(100vh - 10px);
+	margin-right: 5px;
+    margin-bottom: 5px;
+    height: calc(100vh - 15px);
+	border: 1px solid #89bd90;
+    border-radius: 10px;
 }
 
 #time-machine .hidden
@@ -134,8 +138,6 @@ body
 	list-style: none;
 	padding: 0;
 	margin: 0;
-	border: 1px solid #89bd90;
-    border-radius: 10px;
 }
 
 #time-machine #thread-detail > li
