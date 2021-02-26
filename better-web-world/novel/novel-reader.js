@@ -92,6 +92,26 @@ class NovelReader
 				</ul>
 			</div>
 		</div>`;
+		this.bindListeners();
+	}
+
+	bindListeners()
+	{
+		document.querySelector("#menuButton").addEventListener("click", function ()
+		{
+			const category = document.getElementById("category");
+			category.classList.toggle("active");
+		});
+		document.addEventListener("click", function (event)
+		{
+			var target = event.target;
+			var categoryContainer = document.getElementById("category");
+			if (categoryContainer.contains(target) || categoryContainer === target)
+			{
+				return;
+			}
+			document.getElementById("category").classList.remove("active");
+		})
 	}
 }
 
