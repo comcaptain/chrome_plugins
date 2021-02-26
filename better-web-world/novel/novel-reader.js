@@ -103,9 +103,15 @@ class NovelReader
 
 	async jumpToPage(chapterIndex)
 	{
-		const chapter = this.chapters[chapterIndex];
-		await this.crawler.crawlChapterContent(chapter);
-		document.querySelector("#chapters").innerHTML = this.renderChapterHTML(chapter);
+		// Render 2 chapters
+		let chaptersHTML = ""
+		for (let i = 0; i < 2; i++)
+		{
+			const chapter = this.chapters[chapterIndex++];
+			await this.crawler.crawlChapterContent(chapter);
+			chaptersHTML += this.renderChapterHTML(chapter);
+		}
+		document.querySelector("#chapters").innerHTML = chaptersHTML;
 	}
 
 	closeMenu()
