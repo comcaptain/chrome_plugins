@@ -63,36 +63,54 @@ class NovelReader
 
 	async render()
 	{
-		const chapters = this.crawler.crawlChapterLinks();
-		await this.initHTMLNodes(chapters);
+		this.chapters = this.crawler.crawlChapterLinks();
+		await this.initHTMLNodes();
 	}
 
-	async initHTMLNodes(chapters)
+	async initHTMLNodes()
 	{
 		let container = document.querySelector("#novel-reader");
 		if (container) return;
 
+		const chapters = this.chapters;
 		const firstChapter = chapters[0];
 		await this.crawler.crawlChapterContent(firstChapter);
 		container = document.createElement("div");
 		container.id = "novel-reader";
 		document.body.appendChild(container);
 		container.innerHTML = `
-		<div class="chapter">
-			<div class="chapter-header">
-				<h3 class="chapter-title">${firstChapter.title}</h3>
-			</div>
-			<div class="chapter-body">${firstChapter.content}</div>
-		</div>
+		<div id="chapters">${this.renderChapterHTML(firstChapter)}</div>
 		<div id="category">
 			<button class="side-button" id="menuButton" style="background-image: url(${chrome.extension.getURL("novel/background.png")});">目录</button>
 			<div id="category-dialog">
 				<ul id="category-items">
-				${chapters.map(chapter => `<li class="chapter-name">${chapter.title}</li>`).join("\n")}
+				${chapters.map((chapter, index) => `<li class="chapter-name" index="${index}">${chapter.title}</li>`).join("\n")}
 				</ul>
 			</div>
 		</div>`;
 		this.bindListeners();
+	}
+
+	renderChapterHTML(chapter)
+	{
+		return `<div class="chapter">
+			<div class="chapter-header">
+				<h3 class="chapter-title">${chapter.title}</h3>
+			</div>
+			<div class="chapter-body">${chapter.content}</div>
+		</div>`;
+	}
+
+	async jumpToPage(chapterIndex)
+	{
+		const chapter = this.chapters[chapterIndex];
+		await this.crawler.crawlChapterContent(chapter);
+		document.querySelector("#chapters").innerHTML = this.renderChapterHTML(chapter);
+	}
+
+	closeMenu()
+	{
+		document.getElementById("category").classList.remove("active");
 	}
 
 	bindListeners()
@@ -102,16 +120,22 @@ class NovelReader
 			const category = document.getElementById("category");
 			category.classList.toggle("active");
 		});
-		document.addEventListener("click", function (event)
+		document.addEventListener("click", event =>
 		{
-			var target = event.target;
-			var categoryContainer = document.getElementById("category");
+			const target = event.target;
+			const categoryContainer = document.getElementById("category");
 			if (categoryContainer.contains(target) || categoryContainer === target)
 			{
 				return;
 			}
-			document.getElementById("category").classList.remove("active");
+			this.closeMenu();
 		})
+		document.querySelector("#category-items").addEventListener("click", event =>
+		{
+			if (!event.target.classList.contains("chapter-name")) return;
+			this.closeMenu();
+			this.jumpToPage(parseInt(event.target.getAttribute("index")));
+		});
 	}
 }
 
