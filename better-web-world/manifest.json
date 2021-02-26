@@ -36,6 +36,17 @@
 			"js": [
 				"lkong/lkong.js"
 			]
+		},
+		{
+			"matches": [
+				"http://www.bswtan.com/*/*/"
+			],
+			"css": [
+				"novel/novel-reader.css"
+			],
+			"js": [
+				"novel/novel-reader.js"
+			]
 		}
 	],
 	"background": {
