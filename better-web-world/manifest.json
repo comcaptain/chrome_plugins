@@ -54,5 +54,8 @@
 			"hot-reload.js"
 		]
 	},
+	"web_accessible_resources": [
+		"novel/background.png"
+	],
 	"manifest_version": 2
 }

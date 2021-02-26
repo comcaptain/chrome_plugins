@@ -60,7 +60,6 @@ body {
 }
 
 .side-button {
-    background-image: url(background.png);
     width: 60px;
     height: 60px;
     color: rgb(153, 153, 153);

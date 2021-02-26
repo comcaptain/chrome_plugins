@@ -85,7 +85,7 @@ class NovelReader
 			<div class="body">${firstChapter.content}</div>
 		</div>
 		<div id="category">
-			<button class="side-button" id="menuButton">目录</button>
+			<button class="side-button" id="menuButton" style="background-image: url(${chrome.extension.getURL("novel/background.png")});">目录</button>
 			<div id="category-dialog">
 				<ul id="category-items">
 				${chapters.map(chapter => `<li class="chapter-name">${chapter.title}</li>`).join("\n")}
