@@ -49,7 +49,7 @@ class Crawler
 		const response = await fetch(chapter.url);
 		const htmlText = await response.text();
 		const doc = new DOMParser().parseFromString(htmlText, "text/html");
-		chapter.content = doc.querySelector(this.config.chapterContentCssSelector).textContent;
+		chapter.content = doc.querySelector(this.config.chapterContentCssSelector).innerHTML.replace(/<br><br>/g, "<br>");
 		console.info("Crawled chapter", chapter.title, chapter.url);
 	}
 }
@@ -79,10 +79,10 @@ class NovelReader
 		document.body.appendChild(container);
 		container.innerHTML = `
 		<div class="chapter">
-			<div class="header">
+			<div class="chapter-header">
 				<h3 class="chapter-title">${firstChapter.title}</h3>
 			</div>
-			<div class="body">${firstChapter.content}</div>
+			<div class="chapter-body">${firstChapter.content}</div>
 		</div>
 		<div id="category">
 			<button class="side-button" id="menuButton" style="background-image: url(${chrome.extension.getURL("novel/background.png")});">目录</button>
