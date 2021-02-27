@@ -81,7 +81,18 @@ class NovelReader
 	{
 		this.chapters = this.crawler.crawlChapterLinks();
 		await this.initHTMLNodes();
-		await this.jumpToChapter(0);
+		const savedLocation = await this.loadSavedLocation();
+		if (savedLocation)
+		{
+			console.info("Loaded saved location", savedLocation);
+			await this.jumpToChapter(savedLocation.chapterIndex);
+			document.documentElement.scrollTop = savedLocation.scrollTop;
+		}
+		else
+		{
+			console.info("There is no saved location, jump to the 1st chapter")
+			await this.jumpToChapter(0);
+		}
 	}
 
 	async initHTMLNodes()
@@ -130,7 +141,9 @@ class NovelReader
 		this.firstChapterIndex = targetChapterIndex;
 		this.lastChapterIndex = targetChapterIndex - 1;
 		document.querySelector("#chapters").innerHTML = "";
+		this.stopLocationRecorder = true;
 		document.documentElement.scrollTop = 0;
+		this.stopLocationRecorder = false;
 		for (let i = 0; i < 2; i++) await this.addNewChapter();
 	}
 
@@ -149,10 +162,27 @@ class NovelReader
 		newChapter.height = rect.height;
 		newChapter.bottom = rect.bottom + document.documentElement.scrollTop;
 		this.lastChapterIndex++;
+		this.saveCurrentLocation();
+	}
+
+	async loadSavedLocation()
+	{
+		const key = location.href;
+		const savedLocation = await new Promise(resolve => chrome.storage.sync.get(key, obj => resolve(obj[key])));
+		for (let i = 0; i < this.chapters.length; i++)
+		{
+			if (savedLocation.chapterName === this.chapters[i].title)
+			{
+				savedLocation.chapterIndex = i;
+				return savedLocation;
+			}
+		}
+		return null;
 	}
 
 	saveCurrentLocation()
 	{
+		if (this.stopLocationRecorder) return;
 		const obj = { [location.href]: this.getCurrentLocation() };
 		chrome.storage.sync.set(obj, function ()
 		{
