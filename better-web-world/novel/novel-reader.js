@@ -115,17 +115,20 @@ class NovelReader
 		document.querySelector("#chapters").innerHTML = chaptersHTML;
 		this.chapterIndex = chapterIndex - 1;
 		document.documentElement.scrollTop = 0;
+		this.smartScrollable = true;
 	}
 
 	async loadNextChapter()
 	{
-		if (this.loading) return;
-		this.loading = true;
+		if (!this.smartScrollable) return;
+		this.smartScrollable = false;
+		if (this.chapterIndex === this.chapters.length - 1) return;
+
 		const chapter = this.chapters[++this.chapterIndex];
 		await this.crawler.crawlChapterContent(chapter);
 		const chapterNode = new DOMParser().parseFromString(this.renderChapterHTML(chapter), "text/html").querySelector(".chapter");
 		document.querySelector("#chapters").appendChild(chapterNode);
-		this.loading = false;
+		this.smartScrollable = true;
 	}
 
 	closeMenu()
