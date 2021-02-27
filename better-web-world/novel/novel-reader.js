@@ -20,6 +20,8 @@ class Chapter
 		this.title = title;
 		this.url = url;
 		this.content = null;
+		// Height of chapter node in pixel
+		this.height = null;
 		// Y coordinate value of chapter node's bottom border when scrollTop == 0. Unit is pixel
 		this.bottom = null;
 	}
@@ -124,14 +126,39 @@ class NovelReader
 	{
 		if (this.loading || this.lastChapterIndex === this.chapters.length - 1) return false;
 
-		const newChapter = this.chapters[++this.lastChapterIndex];
+		const newChapter = this.chapters[this.lastChapterIndex + 1];
 		this.loading = true;
 		await this.crawler.crawlChapterContent(newChapter);
 		this.loading = false;
 
 		const chapterNode = this.renderChapterNode(newChapter);
 		document.querySelector("#chapters").appendChild(chapterNode);
-		newChapter.bottom = chapterNode.getBoundingClientRect().bottom + document.documentElement.scrollTop
+		const rect = chapterNode.getBoundingClientRect();
+		newChapter.height = rect.height;
+		newChapter.bottom = rect.bottom + document.documentElement.scrollTop;
+		this.lastChapterIndex++;
+	}
+
+	getCurrentLocation()
+	{
+		const scrollTop = document.documentElement.scrollTop;
+		let currentChapter;
+		for (let i = this.firstChapterIndex; i <= this.lastChapterIndex; i++)
+		{
+			const chapter = this.chapters[i];
+			if (chapter.bottom >= scrollTop || i === this.lastChapterIndex)
+			{
+				currentChapter = chapter;
+				break;
+			}
+		}
+		const firstChapter = this.chapters[this.firstChapterIndex];
+		const topOfFirstChapter = firstChapter.bottom - firstChapter.height;
+		let relativeScrollTop = scrollTop - (currentChapter.bottom - currentChapter.height - topOfFirstChapter);
+		return {
+			chapterName: currentChapter.title,
+			scrollTop: relativeScrollTop
+		}
 	}
 
 	closeMenu()
@@ -165,6 +192,7 @@ class NovelReader
 		const chaptersNode = document.querySelector("#chapters");
 		document.addEventListener("scroll", () =>
 		{
+			console.info(this.getCurrentLocation())
 			const scrollContainer = document.documentElement;
 			if (chaptersNode.scrollHeight - scrollContainer.scrollTop - window.innerHeight < 1000) this.addNewChapter();
 		})
