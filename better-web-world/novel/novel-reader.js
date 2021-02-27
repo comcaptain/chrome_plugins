@@ -8,6 +8,9 @@ class WebsiteConfigure
 }
 
 const BIQUGE_CONFIGURE = new WebsiteConfigure("#list > dl > dd > a", "#content");
+const CONFIGURES = {
+	"www.bswtan.com": BIQUGE_CONFIGURE
+}
 
 class Chapter
 {
@@ -260,4 +263,13 @@ class NovelReader
 	}
 }
 
-new NovelReader(BIQUGE_CONFIGURE).render();
+const config = CONFIGURES[document.domain];
+if (config)
+{
+	new NovelReader(config).render();
+}
+else
+{
+	alert(`Current domain ${document.domain} hasn't been set up yet`)
+}
+
