@@ -112,7 +112,7 @@ class NovelReader
 			<button class="side-button" id="menuButton" style="background-image: url(${chrome.extension.getURL("novel/background.png")});">目录</button>
 			<div id="category-dialog">
 				<ul id="category-items">
-				${chapters.map((chapter, index) => `<li class="chapter-name" index="${index}">${chapter.title}</li>`).join("\n")}
+				${chapters.map((chapter, index) => `<li class="chapter-name" index="${index}" anchor="a${index}">${chapter.title}</li>`).join("\n")}
 				</ul>
 			</div>
 		</div>`;
@@ -193,13 +193,14 @@ class NovelReader
 	getCurrentLocation()
 	{
 		const scrollTop = document.documentElement.scrollTop;
-		let currentChapter;
+		let currentChapter, currentIndex;
 		for (let i = this.firstChapterIndex; i <= this.lastChapterIndex; i++)
 		{
 			const chapter = this.chapters[i];
 			if (chapter.bottom >= scrollTop || i === this.lastChapterIndex)
 			{
 				currentChapter = chapter;
+				currentIndex = i;
 				break;
 			}
 		}
@@ -208,21 +209,30 @@ class NovelReader
 		let relativeScrollTop = scrollTop - (currentChapter.bottom - currentChapter.height - topOfFirstChapter);
 		return {
 			chapterName: currentChapter.title,
-			scrollTop: relativeScrollTop
+			scrollTop: relativeScrollTop,
+			index: currentIndex
 		}
+	}
+
+	openMenu()
+	{
+		document.querySelector("#category").classList.add("active");
+		document.querySelectorAll(".chapter-name.active").forEach(e => e.classList.remove("active"));
+		const currentChapterNameNode = document.querySelector(`.chapter-name[anchor=a${this.getCurrentLocation().index}]`);
+		currentChapterNameNode.classList.add("active");
+		currentChapterNameNode.scrollIntoView();
 	}
 
 	closeMenu()
 	{
-		document.getElementById("category").classList.remove("active");
+		document.querySelector("#category").classList.remove("active");
 	}
 
 	bindListeners()
 	{
-		document.querySelector("#menuButton").addEventListener("click", function ()
+		document.querySelector("#menuButton").addEventListener("click", () =>
 		{
-			const category = document.getElementById("category");
-			category.classList.toggle("active");
+			this.openMenu();
 		});
 		document.addEventListener("click", event =>
 		{

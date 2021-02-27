@@ -122,7 +122,14 @@ body {
     text-overflow: ellipsis;
     overflow: hidden;
 }
-.chapter-name:hover, .chapter-name.current {
-	color: red;
+.chapter-name {
 	cursor: pointer;
+}
+
+.chapter-name.active {
+	color: red;
+}
+
+.chapter-name:hover {
+	color: green;
 }
