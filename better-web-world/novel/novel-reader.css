@@ -12,9 +12,14 @@ body {
 	font-family: 'Microsoft YaHei';
 	font-size: 16px;
 }
-.chapter {
+
+#chapters {
 	width: 800px;
 	margin: 0 auto;
+	min-height: 100vh; /* Keep scrollbar on the screen. So that chapters icon would not move when jumping to new chapter */
+}
+
+.chapter {
 	margin-bottom: 30px;
 	background-color: #F6F4EC;
 	box-shadow: 0 0 15px 0 #CCC;

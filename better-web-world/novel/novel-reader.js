@@ -20,6 +20,8 @@ class Chapter
 		this.title = title;
 		this.url = url;
 		this.content = null;
+		// Y coordinate value of chapter node's bottom border when scrollTop == 0. Unit is pixel
+		this.bottom = null;
 	}
 }
 
@@ -92,43 +94,44 @@ class NovelReader
 		this.bindListeners();
 	}
 
-	renderChapterHTML(chapter)
+	renderChapterNode(chapter)
 	{
-		return `<div class="chapter">
+		const chapterNode = document.createElement("div");
+		chapterNode.classList.add("chapter");
+		chapterNode.innerHTML = `
 			<div class="chapter-header">
 				<h3 class="chapter-title">${chapter.title}</h3>
 			</div>
-			<div class="chapter-body">${chapter.content}</div>
-		</div>`;
+			<div class="chapter-body">${chapter.content}</div>`;
+		return chapterNode;
 	}
 
-	async jumpToChapter(chapterIndex)
+	async jumpToChapter(targetChapterIndex)
 	{
-		// Render 2 chapters
-		let chaptersHTML = ""
-		for (let i = 0; i < 2; i++)
+		if (this.loading)
 		{
-			const chapter = this.chapters[chapterIndex++];
-			await this.crawler.crawlChapterContent(chapter);
-			chaptersHTML += this.renderChapterHTML(chapter);
+			alert("Loading new chapter, please retry again later");
+			return;
 		}
-		document.querySelector("#chapters").innerHTML = chaptersHTML;
-		this.chapterIndex = chapterIndex - 1;
+		this.firstChapterIndex = targetChapterIndex;
+		this.lastChapterIndex = targetChapterIndex - 1;
+		document.querySelector("#chapters").innerHTML = "";
 		document.documentElement.scrollTop = 0;
-		this.smartScrollable = true;
+		for (let i = 0; i < 2; i++) await this.addNewChapter();
 	}
 
-	async loadNextChapter()
+	async addNewChapter()
 	{
-		if (!this.smartScrollable) return;
-		this.smartScrollable = false;
-		if (this.chapterIndex === this.chapters.length - 1) return;
+		if (this.loading || this.lastChapterIndex === this.chapters.length - 1) return false;
 
-		const chapter = this.chapters[++this.chapterIndex];
-		await this.crawler.crawlChapterContent(chapter);
-		const chapterNode = new DOMParser().parseFromString(this.renderChapterHTML(chapter), "text/html").querySelector(".chapter");
+		const newChapter = this.chapters[++this.lastChapterIndex];
+		this.loading = true;
+		await this.crawler.crawlChapterContent(newChapter);
+		this.loading = false;
+
+		const chapterNode = this.renderChapterNode(newChapter);
 		document.querySelector("#chapters").appendChild(chapterNode);
-		this.smartScrollable = true;
+		newChapter.bottom = chapterNode.getBoundingClientRect().bottom + document.documentElement.scrollTop
 	}
 
 	closeMenu()
@@ -163,7 +166,7 @@ class NovelReader
 		document.addEventListener("scroll", () =>
 		{
 			const scrollContainer = document.documentElement;
-			if (chaptersNode.scrollHeight - scrollContainer.scrollTop - window.innerHeight < 1000) this.loadNextChapter();
+			if (chaptersNode.scrollHeight - scrollContainer.scrollTop - window.innerHeight < 1000) this.addNewChapter();
 		})
 	}
 }
