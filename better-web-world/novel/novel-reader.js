@@ -27,6 +27,17 @@ class Chapter
 	}
 }
 
+function debounce(callback, wait)
+{
+	let timeout;
+	return (...args) =>
+	{
+		const context = this;
+		clearTimeout(timeout);
+		timeout = setTimeout(() => callback.apply(context, args), wait);
+	};
+}
+
 class Crawler
 {
 	/**
@@ -63,6 +74,7 @@ class NovelReader
 	constructor(websiteConfig)
 	{
 		this.crawler = new Crawler(websiteConfig);
+		this.saveCurrentLocation = debounce.call(this, this.saveCurrentLocation, 100);
 	}
 
 	async render()
@@ -139,6 +151,15 @@ class NovelReader
 		this.lastChapterIndex++;
 	}
 
+	saveCurrentLocation()
+	{
+		const obj = { [location.href]: this.getCurrentLocation() };
+		chrome.storage.sync.set(obj, function ()
+		{
+			console.log('Saved current location', obj);
+		});
+	}
+
 	getCurrentLocation()
 	{
 		const scrollTop = document.documentElement.scrollTop;
@@ -192,7 +213,7 @@ class NovelReader
 		const chaptersNode = document.querySelector("#chapters");
 		document.addEventListener("scroll", () =>
 		{
-			console.info(this.getCurrentLocation())
+			this.saveCurrentLocation();
 			const scrollContainer = document.documentElement;
 			if (chaptersNode.scrollHeight - scrollContainer.scrollTop - window.innerHeight < 1000) this.addNewChapter();
 		})

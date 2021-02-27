@@ -57,5 +57,8 @@
 	"web_accessible_resources": [
 		"novel/background.png"
 	],
+	"permissions": [
+		"storage"
+	],
 	"manifest_version": 2
 }
