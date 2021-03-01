@@ -40,7 +40,8 @@
 		{
 			"matches": [
 				"http://www.bswtan.com/*/*/",
-				"https://www.vbiquge.com/*/"
+				"https://www.vbiquge.com/*/",
+				"https://www.dingdiann.net/ddk*/"
 			],
 			"css": [
 				"novel/novel-reader.css"

@@ -10,7 +10,8 @@ class WebsiteConfigure
 const BIQUGE_CONFIGURE = new WebsiteConfigure("#list > dl > dd > a", "#content");
 const CONFIGURES = {
 	"www.bswtan.com": BIQUGE_CONFIGURE,
-	"www.vbiquge.com": BIQUGE_CONFIGURE
+	"www.vbiquge.com": BIQUGE_CONFIGURE,
+	"www.dingdiann.net": BIQUGE_CONFIGURE
 }
 
 class Chapter
