@@ -9,7 +9,8 @@ class WebsiteConfigure
 
 const BIQUGE_CONFIGURE = new WebsiteConfigure("#list > dl > dd > a", "#content");
 const CONFIGURES = {
-	"www.bswtan.com": BIQUGE_CONFIGURE
+	"www.bswtan.com": BIQUGE_CONFIGURE,
+	"www.vbiquge.com": BIQUGE_CONFIGURE
 }
 
 class Chapter
@@ -172,6 +173,7 @@ class NovelReader
 	{
 		const key = location.href;
 		const savedLocation = await new Promise(resolve => chrome.storage.sync.get(key, obj => resolve(obj[key])));
+		if (!savedLocation) return null;
 		for (let i = 0; i < this.chapters.length; i++)
 		{
 			if (savedLocation.chapterName === this.chapters[i].title)

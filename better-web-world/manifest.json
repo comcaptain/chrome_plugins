@@ -39,7 +39,8 @@
 		},
 		{
 			"matches": [
-				"http://www.bswtan.com/*/*/"
+				"http://www.bswtan.com/*/*/",
+				"https://www.vbiquge.com/*/"
 			],
 			"css": [
 				"novel/novel-reader.css"
