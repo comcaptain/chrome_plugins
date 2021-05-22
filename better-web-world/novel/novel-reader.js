@@ -28,7 +28,7 @@ class Chapter
 	 */
 	constructor(title, url)
 	{
-		this.title = title;
+		this.title = title.replace(/^\d+\./, "");
 		this.url = url;
 		this.content = null;
 		// Height of chapter node in pixel
@@ -114,6 +114,22 @@ class NovelReader
 			console.info("There is no saved location, jump to the 1st chapter")
 			await this.jumpToChapter(0);
 		}
+	}
+
+	async downloadFromCurrentChapter()
+	{
+		const currentChapterIndex = this.getCurrentLocation().index;
+		const downloadChapters = this.chapters.filter((_, index) => index >= currentChapterIndex);
+		await Promise.all(downloadChapters.map(chapter => this.crawler.crawlChapterContent(chapter)));
+		const novelContent = downloadChapters.map(chapter => `${chapter.title}\n\n${chapter.content}`).join("\n");
+		const novelName = window.prompt("下载完成，请输入小说名称");
+		const a = document.createElement('a');
+		a.href = window.URL.createObjectURL(new Blob([novelContent], { type: 'text/plain' }));
+		a.setAttribute('download', `${novelName}.txt`);
+		a.style.display = 'none';
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
 	}
 
 	async initHTMLNodes()
@@ -252,6 +268,14 @@ class NovelReader
 
 	bindListeners()
 	{
+		document.addEventListener("keydown", event =>
+		{
+			if (event.ctrlKey && event.key === "d")
+			{
+				event.preventDefault();
+				this.downloadFromCurrentChapter();
+			}
+		});
 		document.querySelector("#menuButton").addEventListener("click", () =>
 		{
 			this.openMenu();
