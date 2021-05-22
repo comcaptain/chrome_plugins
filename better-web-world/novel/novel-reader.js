@@ -76,17 +76,18 @@ class Crawler
 		const arrayBuffer = await response.arrayBuffer();
 		const htmlText = new TextDecoder(this.config.encoding).decode(new DataView(arrayBuffer));
 		const doc = new DOMParser().parseFromString(htmlText, "text/html");
-		chapter.content = preprocessChapterContentHTML(doc.querySelector(this.config.chapterContentCssSelector).innerHTML);
+		chapter.content = preprocessChapterContentHTML(doc.querySelector(this.config.chapterContentCssSelector));
 		console.info("Crawled chapter", chapter.title, chapter.url);
 	}
 }
 
 /**
- * @param {String} novelContentHTML 
+ * @param {HTMLElement} novelContentNode
  */
-function preprocessChapterContentHTML(novelContentHTML)
+function preprocessChapterContentHTML(novelContentNode)
 {
-	return novelContentHTML.replace("百度搜索“”", "").replace("(未完待续!", "").replace(/<br><br>/g, "<br>");
+	[].slice.apply(novelContentNode.children).filter(node => node.tagName !== 'BR').forEach(node => node.remove());
+	return novelContentNode.innerHTML.replace("百度搜索“”", "").replace("(未完待续!", "").replace(/<br><br>/g, "<br>");
 }
 
 class NovelReader
