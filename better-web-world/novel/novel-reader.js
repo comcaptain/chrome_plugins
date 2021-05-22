@@ -87,7 +87,7 @@ class Crawler
 function preprocessChapterContentHTML(novelContentNode)
 {
 	[].slice.apply(novelContentNode.children).filter(node => node.tagName !== 'BR').forEach(node => node.remove());
-	return novelContentNode.innerHTML.replace("百度搜索“”", "").replace("(未完待续!", "").replace(/<br><br>/g, "<br>");
+	return novelContentNode.innerText.replace(/^\s*第\d+章 .*\n\n/, "").replace(/\n\s*\n/g, "\n");
 }
 
 class NovelReader
