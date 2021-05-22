@@ -1,17 +1,23 @@
 class WebsiteConfigure
 {
-	constructor(chapterListCssSelector, chapterContentCssSelector)
+	constructor(chapterListCssSelector, chapterContentCssSelector, encoding = "utf-8")
 	{
 		this.chapterListCssSelector = chapterListCssSelector;
 		this.chapterContentCssSelector = chapterContentCssSelector;
+		this.encoding = encoding;
 	}
 }
 
 const BIQUGE_CONFIGURE = new WebsiteConfigure("#list > dl > dd > a", "#content");
+const DINGDIAN_CONFIGURE = new WebsiteConfigure("div.listmain > dl > dd > a", "#content")
+const SIX_NINE_SHU_CONFIGURE = new WebsiteConfigure("#catalog > ul > li > a", ".txtnav", "GBK");
 const CONFIGURES = {
 	"www.bswtan.com": BIQUGE_CONFIGURE,
 	"www.vbiquge.com": BIQUGE_CONFIGURE,
-	"www.dingdiann.net": BIQUGE_CONFIGURE
+	"www.biquku.la": BIQUGE_CONFIGURE,
+	"www.dingdiann.net": BIQUGE_CONFIGURE,
+	"www.xbiquge.la": BIQUGE_CONFIGURE,
+	"www.69shu.com": SIX_NINE_SHU_CONFIGURE
 }
 
 class Chapter
@@ -67,11 +73,20 @@ class Crawler
 		if (chapter.content) return;
 		console.info("Crawling chapter", chapter.title, chapter.url);
 		const response = await fetch(chapter.url);
-		const htmlText = await response.text();
+		const arrayBuffer = await response.arrayBuffer();
+		const htmlText = new TextDecoder(this.config.encoding).decode(new DataView(arrayBuffer));
 		const doc = new DOMParser().parseFromString(htmlText, "text/html");
-		chapter.content = doc.querySelector(this.config.chapterContentCssSelector).innerHTML.replace(/<br><br>/g, "<br>");
+		chapter.content = preprocessChapterContentHTML(doc.querySelector(this.config.chapterContentCssSelector).innerHTML);
 		console.info("Crawled chapter", chapter.title, chapter.url);
 	}
+}
+
+/**
+ * @param {String} novelContentHTML 
+ */
+function preprocessChapterContentHTML(novelContentHTML)
+{
+	return novelContentHTML.replace("百度搜索“”", "").replace("(未完待续!", "").replace(/<br><br>/g, "<br>");
 }
 
 class NovelReader
