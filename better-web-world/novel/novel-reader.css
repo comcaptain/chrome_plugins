@@ -52,13 +52,13 @@ body {
 	overflow: hidden; /* For very long rows. Like a thousand dots */
 }
 
-#category {
+#side-menu {
 	position: fixed;
 	top: 8px;
 	left: calc(50% - 465px);
 }
 
-#menuButton {
+#menu-button {
     background-position: -60px -10px;
 }
 
@@ -84,22 +84,25 @@ body {
     margin-bottom: 5px;
 }
 
-#category.active .side-button {
+#menu-button.active {
 	background-color: white;
-	width: 65px;
+	width: 66px;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+	padding-right: 16px;
 	cursor: inherit;
 }
 
 #category-dialog {
-    position: absolute;
+    position: fixed;
     padding: 20px;
     background: white;
     width: 600px;
-    top: 0;
-    left: 65px;
+	top: 8px;
+	left: calc(50% - 399px);
     display: none;
 }
-#category.active #category-dialog {
+#category-dialog.active {
 	display: block;
 }
 

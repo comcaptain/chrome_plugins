@@ -145,13 +145,14 @@ class NovelReader
 		document.body.appendChild(container);
 		container.innerHTML = `
 		<div id="chapters"></div>
-		<div id="category">
-			<button class="side-button" id="menuButton" style="background-image: url(${chrome.extension.getURL("novel/background.png")});">目录</button>
-			<div id="category-dialog">
-				<ul id="category-items">
-				${chapters.map((chapter, index) => `<li class="chapter-name" index="${index}" anchor="a${index}">${chapter.title}</li>`).join("\n")}
-				</ul>
-			</div>
+		<div id="side-menu">
+			<button class="side-button" id="menu-button" style="background-image: url(${chrome.extension.getURL("novel/background.png")});">目录</button>
+			<button class="side-button" id="download-novel">下载</button>
+		</div>
+		<div id="category-dialog">
+			<ul id="category-items">
+			${chapters.map((chapter, index) => `<li class="chapter-name" index="${index}" anchor="a${index}">${chapter.title}</li>`).join("\n")}
+			</ul>
 		</div>`;
 		this.bindListeners();
 	}
@@ -254,7 +255,8 @@ class NovelReader
 
 	openMenu()
 	{
-		document.querySelector("#category").classList.add("active");
+		document.querySelector("#menu-button").classList.add("active");
+		document.querySelector("#category-dialog").classList.add("active");
 		document.querySelectorAll(".chapter-name.active").forEach(e => e.classList.remove("active"));
 		const currentChapterNameNode = document.querySelector(`.chapter-name[anchor=a${this.getCurrentLocation().index}]`);
 		currentChapterNameNode.classList.add("active");
@@ -263,7 +265,8 @@ class NovelReader
 
 	closeMenu()
 	{
-		document.querySelector("#category").classList.remove("active");
+		document.querySelector("#menu-button").classList.remove("active");
+		document.querySelector("#category-dialog").classList.remove("active");
 	}
 
 	bindListeners()
@@ -276,14 +279,15 @@ class NovelReader
 				this.downloadFromCurrentChapter();
 			}
 		});
-		document.querySelector("#menuButton").addEventListener("click", () =>
+		document.querySelector("#menu-button").addEventListener("click", event =>
 		{
 			this.openMenu();
+			event.stopPropagation();
 		});
 		document.addEventListener("click", event =>
 		{
 			const target = event.target;
-			const categoryContainer = document.getElementById("category");
+			const categoryContainer = document.getElementById("category-dialog");
 			if (categoryContainer.contains(target) || categoryContainer === target)
 			{
 				return;
@@ -292,9 +296,11 @@ class NovelReader
 		})
 		document.querySelector("#category-items").addEventListener("click", event =>
 		{
-			if (!event.target.classList.contains("chapter-name")) return;
+			let itemNode = event.target;
+			if (!itemNode.classList.contains("chapter-name")) itemNode = itemNode.parentNode;
+			if (!itemNode.classList.contains("chapter-name")) return;
 			this.closeMenu();
-			this.jumpToChapter(parseInt(event.target.getAttribute("index")));
+			this.jumpToChapter(parseInt(itemNode.getAttribute("index")));
 		});
 		const chaptersNode = document.querySelector("#chapters");
 		document.addEventListener("scroll", () =>
