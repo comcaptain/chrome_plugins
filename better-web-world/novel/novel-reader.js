@@ -279,6 +279,10 @@ class NovelReader
 				this.downloadFromCurrentChapter();
 			}
 		});
+		document.querySelector("#download-novel").addEventListener("click", event =>
+		{
+			this.downloadFromCurrentChapter();
+		});
 		document.querySelector("#menu-button").addEventListener("click", event =>
 		{
 			this.openMenu();
