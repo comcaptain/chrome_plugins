@@ -151,7 +151,7 @@ class NovelReader
 		</div>
 		<div id="category-dialog">
 			<ul id="category-items">
-			${chapters.map((chapter, index) => `<li class="chapter-name" index="${index}" anchor="a${index}">${chapter.title}</li>`).join("\n")}
+			${chapters.map((chapter, index) => `<li class="chapter-name" index="${index}" anchor="a${index}"><span>${chapter.title}</span></li>`).join("\n")}
 			</ul>
 		</div>`;
 		this.bindListeners();
