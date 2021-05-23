@@ -60,7 +60,8 @@
 		]
 	},
 	"web_accessible_resources": [
-		"novel/background.png"
+		"novel/background.png",
+		"novel/download.svg"
 	],
 	"permissions": [
 		"storage"

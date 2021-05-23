@@ -144,3 +144,9 @@ body {
 .chapter-name:hover {
 	color: green;
 }
+
+#download-novel {
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 70%;
+}

@@ -147,7 +147,7 @@ class NovelReader
 		<div id="chapters"></div>
 		<div id="side-menu">
 			<button class="side-button" id="menu-button" style="background-image: url(${chrome.extension.getURL("novel/background.png")});">目录</button>
-			<button class="side-button" id="download-novel">下载</button>
+			<button class="side-button" id="download-novel" style="background-image: url(${chrome.extension.getURL("novel/download.svg")});"></button>
 		</div>
 		<div id="category-dialog">
 			<ul id="category-items">
