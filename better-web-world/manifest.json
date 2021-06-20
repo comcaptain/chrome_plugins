@@ -44,7 +44,8 @@
 				"http://www.biquku.la/*/*/",
 				"https://www.vbiquge.com/*/",
 				"https://www.dingdiann.net/ddk*/",
-				"https://www.69shu.com/*/"
+				"https://www.69shu.com/*/",
+				"https://www.20xs.cc/dingdian/*/"
 			],
 			"css": [
 				"novel/novel-reader.css"

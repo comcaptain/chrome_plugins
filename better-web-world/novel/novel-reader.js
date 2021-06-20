@@ -17,6 +17,7 @@ const CONFIGURES = {
 	"www.biquku.la": BIQUGE_CONFIGURE,
 	"www.dingdiann.net": BIQUGE_CONFIGURE,
 	"www.xbiquge.la": BIQUGE_CONFIGURE,
+	"www.20xs.cc": BIQUGE_CONFIGURE,
 	"www.69shu.com": SIX_NINE_SHU_CONFIGURE
 }
 
@@ -28,7 +29,7 @@ class Chapter
 	 */
 	constructor(title, url)
 	{
-		this.title = title.replace(/^\d+\./, "");
+		this.title = title;
 		this.url = url;
 		this.content = null;
 		// Height of chapter node in pixel
@@ -86,8 +87,15 @@ class Crawler
  */
 function preprocessChapterContentHTML(novelContentNode)
 {
-	[].slice.apply(novelContentNode.children).filter(node => node.tagName !== 'BR').forEach(node => node.remove());
-	return novelContentNode.innerText.replace(/^\s*第\d+章 .*\n\n/, "").replace(/\n\s*\n/g, "\n");
+	[].slice.apply(novelContentNode.children).filter(node => node.tagName !== 'BR' && node.tagName != 'P').forEach(node => node.remove());
+	let novelContent = [].slice.apply(novelContentNode.children).map(node =>
+	{
+		node.remove();
+		let innerText = node.innerText.trim();
+		if (innerText === "") return null;
+		return `  ${innerText}`;
+	}).filter(text => text).join("\n");
+	return novelContent += novelContentNode.innerText.replace(/^\s*第\d+章 .*\n\n/, "").replace(/\n\s*\n/g, "\n");
 }
 
 class NovelReader
