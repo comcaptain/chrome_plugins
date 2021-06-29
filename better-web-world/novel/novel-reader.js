@@ -14,10 +14,11 @@ const SIX_NINE_SHU_CONFIGURE = new WebsiteConfigure("#catalog > ul > li > a", ".
 const CONFIGURES = {
 	"www.bswtan.com": BIQUGE_CONFIGURE,
 	"www.vbiquge.com": BIQUGE_CONFIGURE,
-	"www.biquku.la": BIQUGE_CONFIGURE,
+	"www.xbiquwx.la": BIQUGE_CONFIGURE,
 	"www.dingdiann.net": BIQUGE_CONFIGURE,
 	"www.xbiquge.la": BIQUGE_CONFIGURE,
 	"www.20xs.cc": BIQUGE_CONFIGURE,
+	"www.vipxs.la": BIQUGE_CONFIGURE,
 	"www.69shu.com": SIX_NINE_SHU_CONFIGURE
 }
 
@@ -87,15 +88,15 @@ class Crawler
  */
 function preprocessChapterContentHTML(novelContentNode)
 {
-	[].slice.apply(novelContentNode.children).filter(node => node.tagName !== 'BR' && node.tagName != 'P').forEach(node => node.remove());
-	let novelContent = [].slice.apply(novelContentNode.children).map(node =>
-	{
-		node.remove();
-		let innerText = node.innerText.trim();
-		if (innerText === "") return null;
-		return `  ${innerText}`;
-	}).filter(text => text).join("\n");
-	return novelContent += novelContentNode.innerText.replace(/^\s*第\d+章 .*\n\n/, "").replace(/\n\s*\n/g, "\n");
+	// [].slice.apply(novelContentNode.children).filter(node => node.tagName !== 'BR' && node.tagName != 'P').forEach(node => node.remove());
+	// let novelContent = [].slice.apply(novelContentNode.children).filter(node => node.tagName === 'P').map(node =>
+	// {
+	// 	node.remove();
+	// 	let innerText = node.innerText.trim();
+	// 	if (innerText === "") return null;
+	// 	return `  ${innerText}`;
+	// }).filter(text => text).join("\n");
+	return novelContentNode.innerHTML.replace(/<br>\s*<br>/g, '<br>');
 }
 
 class NovelReader
@@ -128,6 +129,24 @@ class NovelReader
 	{
 		const currentChapterIndex = this.getCurrentLocation().index;
 		const downloadChapters = this.chapters.filter((_, index) => index >= currentChapterIndex);
+		// for (const chapter of downloadChapters)
+		// {
+		// 	while (true)
+		// 	{
+		// 		try
+		// 		{
+		// 			await this.crawler.crawlChapterContent(chapter);
+		// 			await new Promise(resolve => setTimeout(resolve, 500));
+		// 			break;
+		// 		}
+		// 		catch (e)
+		// 		{
+		// 			console.info(`Failed to crawl ${chapter.title}, sleep for 1 second and try again`)
+		// 			await new Promise(resolve => setTimeout(resolve, 1000));
+		// 			console.info("Sleep finished")
+		// 		}
+		// 	}
+		// }
 		await Promise.all(downloadChapters.map(chapter => this.crawler.crawlChapterContent(chapter)));
 		const novelContent = downloadChapters.map(chapter => `${chapter.title}\n\n${chapter.content}`).join("\n");
 		const novelName = window.prompt("下载完成，请输入小说名称");
@@ -159,7 +178,7 @@ class NovelReader
 		</div>
 		<div id="category-dialog">
 			<ul id="category-items">
-			${chapters.map((chapter, index) => `<li class="chapter-name" index="${index}" anchor="a${index}"><span>${chapter.title}</span></li>`).join("\n")}
+			${chapters.map((chapter, index) => `<li class="chapter-name" index="${index}" anchor="a${index}">${chapter.title}</li>`).join("\n")}
 			</ul>
 		</div>`;
 		this.bindListeners();
