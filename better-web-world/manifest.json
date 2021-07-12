@@ -39,7 +39,7 @@
 		},
 		{
 			"matches": [
-				"http://www.bswtan.com/*/*/",
+				"https://www.ibswtan.com/*/*/",
 				"https://www.xbiquge.la/*/*/",
 				"https://www.xbiquwx.la/*/",
 				"https://www.vbiquge.com/*/",
@@ -53,6 +53,14 @@
 			],
 			"js": [
 				"novel/novel-reader.js"
+			]
+		},
+		{
+			"matches": [
+				"https://spring.io/blog/*"
+			],
+			"css": [
+				"styles/spring.io.blog.css"
 			]
 		}
 	],

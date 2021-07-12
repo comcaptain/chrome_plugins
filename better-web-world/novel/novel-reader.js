@@ -12,7 +12,7 @@ const BIQUGE_CONFIGURE = new WebsiteConfigure("#list > dl > dd > a", "#content")
 const DINGDIAN_CONFIGURE = new WebsiteConfigure("div.listmain > dl > dd > a", "#content")
 const SIX_NINE_SHU_CONFIGURE = new WebsiteConfigure("#catalog > ul > li > a", ".txtnav", "GBK");
 const CONFIGURES = {
-	"www.bswtan.com": BIQUGE_CONFIGURE,
+	"www.ibswtan.com": BIQUGE_CONFIGURE,
 	"www.vbiquge.com": BIQUGE_CONFIGURE,
 	"www.xbiquwx.la": BIQUGE_CONFIGURE,
 	"www.dingdiann.net": BIQUGE_CONFIGURE,
