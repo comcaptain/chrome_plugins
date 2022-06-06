@@ -9,17 +9,25 @@ class WebsiteConfigure
 }
 
 const BIQUGE_CONFIGURE = new WebsiteConfigure("#list > dl > dd > a", "#content");
+const BIQUGE_CONFIGURE2 = new WebsiteConfigure("#list > dl > dd > a", ".content");
+const BIQUGER_CONFIGURE = new WebsiteConfigure("#list > dl > dd > a", "#booktext");
 const DINGDIAN_CONFIGURE = new WebsiteConfigure("div.listmain > dl > dd > a", "#content")
+const CV148_CONFIGURE = new WebsiteConfigure("div.chapters > ul > li:not(.listover) > mip-link.mip-element > a", "div.content")
 const SIX_NINE_SHU_CONFIGURE = new WebsiteConfigure("#catalog > ul > li > a", ".txtnav", "GBK");
 const CONFIGURES = {
 	"www.ibswtan.com": BIQUGE_CONFIGURE,
 	"www.vbiquge.com": BIQUGE_CONFIGURE,
+	"www.biquger.com": BIQUGER_CONFIGURE,
 	"www.xbiquwx.la": BIQUGE_CONFIGURE,
 	"www.dingdiann.net": BIQUGE_CONFIGURE,
 	"www.xbiquge.la": BIQUGE_CONFIGURE,
 	"www.20xs.cc": BIQUGE_CONFIGURE,
 	"www.vipxs.la": BIQUGE_CONFIGURE,
-	"www.69shu.com": SIX_NINE_SHU_CONFIGURE
+	"www.69shu.com": SIX_NINE_SHU_CONFIGURE,
+	"www.mayiwxw.com": BIQUGE_CONFIGURE,
+	"www.shudai.org": BIQUGE_CONFIGURE,
+	"www.biqugesk.org": BIQUGE_CONFIGURE2,
+	"mip.cv148.com": CV148_CONFIGURE
 }
 
 class Chapter
@@ -96,6 +104,7 @@ function preprocessChapterContentHTML(novelContentNode)
 	// 	if (innerText === "") return null;
 	// 	return `  ${innerText}`;
 	// }).filter(text => text).join("\n");
+	[].slice.apply(novelContentNode.querySelectorAll("center, #center_tip, p")).forEach(node => node.remove());
 	return novelContentNode.innerHTML.replace(/<br>\s*<br>/g, '<br>');
 }
 
