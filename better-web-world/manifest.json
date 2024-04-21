@@ -61,7 +61,8 @@
 				"http://www.26ks.org/book/*/",
 				"https://www.xxbiqudu.com/*/",
 				"https://www.aishangba4.com/*/",
-				"http://www.5you8.net/*/*/"
+				"http://www.5you8.net/*/*/",
+				"file:///*.txt"
 			],
 			"css": [
 				"novel/novel-reader.css"
@@ -91,7 +92,8 @@
 		}
 	],
 	"permissions": [
-		"storage"
+		"storage",
+		"file://*/*"
 	],
 	"manifest_version": 3
 }
