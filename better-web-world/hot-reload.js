@@ -35,10 +35,12 @@ chrome.management.getSelf(self =>
 	{
 		chrome.runtime.getPackageDirectoryEntry(dir => watchChanges(dir))
 		// If you also want to auto-reload current page, then uncomment following lines
-		// chrome.tabs.query ({ active: true, lastFocusedWindow: true }, tabs => { // NB: see https://github.com/xpl/crx-hotreload/issues/5
-		//     if (tabs[0]) {
-		//         chrome.tabs.reload (tabs[0].id)
-		//     }
+		// chrome.tabs.query({ active: true, lastFocusedWindow: true }, tabs =>
+		// { // NB: see https://github.com/xpl/crx-hotreload/issues/5
+		// 	if (tabs[0])
+		// 	{
+		// 		chrome.tabs.reload(tabs[0].id)
+		// 	}
 		// })
 	}
 })

@@ -9,25 +9,39 @@ class WebsiteConfigure
 }
 
 const BIQUGE_CONFIGURE = new WebsiteConfigure("#list > dl > dd > a", "#content");
+const BIQUGE_CONFIGURE_GBK = new WebsiteConfigure("#list > dl > dd > a", "#content", "GBK");
 const BIQUGE_CONFIGURE2 = new WebsiteConfigure("#list > dl > dd > a", ".content");
 const BIQUGER_CONFIGURE = new WebsiteConfigure("#list > dl > dd > a", "#booktext");
+const MAIN_CONFIGURE = new WebsiteConfigure("div.listmain > dl > dd > a", "#content", "GBK")
 const DINGDIAN_CONFIGURE = new WebsiteConfigure("div.listmain > dl > dd > a", "#content")
 const CV148_CONFIGURE = new WebsiteConfigure("div.chapters > ul > li:not(.listover) > mip-link.mip-element > a", "div.content")
 const SIX_NINE_SHU_CONFIGURE = new WebsiteConfigure("#catalog > ul > li > a", ".txtnav", "GBK");
+const QU_LA_CONFIGURE = new WebsiteConfigure("#list > div.book-chapter-list > ul > li > a", "#txt", "GBK");
+const PIAOTIA_CONFIGURE = new WebsiteConfigure('.mainbody > .centent > ul > li > a', "#txtmid,#content", "GBK")
+const FIVE_U_8_CONFIGURE = new WebsiteConfigure('.ml_content > .zb > .ml_list > ul > li > a', "#articlecontent", "GBK")
 const CONFIGURES = {
 	"www.ibswtan.com": BIQUGE_CONFIGURE,
 	"www.vbiquge.com": BIQUGE_CONFIGURE,
 	"www.biquger.com": BIQUGER_CONFIGURE,
-	"www.xbiquwx.la": BIQUGE_CONFIGURE,
+	"www.xbiqugu.info": BIQUGE_CONFIGURE,
 	"www.dingdiann.net": BIQUGE_CONFIGURE,
 	"www.xbiquge.la": BIQUGE_CONFIGURE,
 	"www.20xs.cc": BIQUGE_CONFIGURE,
 	"www.vipxs.la": BIQUGE_CONFIGURE,
-	"www.69shu.com": SIX_NINE_SHU_CONFIGURE,
+	"www.69xinshu.com": SIX_NINE_SHU_CONFIGURE,
 	"www.mayiwxw.com": BIQUGE_CONFIGURE,
 	"www.shudai.org": BIQUGE_CONFIGURE,
+	"wujixsw.com": BIQUGE_CONFIGURE,
 	"www.biqugesk.org": BIQUGE_CONFIGURE2,
-	"mip.cv148.com": CV148_CONFIGURE
+	"mip.cv148.com": CV148_CONFIGURE,
+	"www.qu-la.com": QU_LA_CONFIGURE,
+	"www.ibiquges.org": BIQUGE_CONFIGURE,
+	"www.liewenn.com": BIQUGE_CONFIGURE_GBK,
+	"www.piaotia.com": PIAOTIA_CONFIGURE,
+	"www.26ks.org": BIQUGER_CONFIGURE,
+	"www.xxbiqudu.com": BIQUGE_CONFIGURE_GBK,
+	"www.aishangba4.com": BIQUGE_CONFIGURE,
+	"www.5you8.net": FIVE_U_8_CONFIGURE,
 }
 
 class Chapter
@@ -86,7 +100,13 @@ class Crawler
 		const arrayBuffer = await response.arrayBuffer();
 		const htmlText = new TextDecoder(this.config.encoding).decode(new DataView(arrayBuffer));
 		const doc = new DOMParser().parseFromString(htmlText, "text/html");
-		chapter.content = preprocessChapterContentHTML(doc.querySelector(this.config.chapterContentCssSelector));
+		const contentNode = doc.querySelector(this.config.chapterContentCssSelector);
+		if (!contentNode)
+		{
+			console.error(htmlText)
+			throw new Error(`No content for ${chapter.url}`);
+		}
+		chapter.content = preprocessChapterContentHTML(contentNode);
 		console.info("Crawled chapter", chapter.title, chapter.url);
 	}
 }
@@ -104,8 +124,18 @@ function preprocessChapterContentHTML(novelContentNode)
 	// 	if (innerText === "") return null;
 	// 	return `  ${innerText}`;
 	// }).filter(text => text).join("\n");
-	[].slice.apply(novelContentNode.querySelectorAll("center, #center_tip, p")).forEach(node => node.remove());
-	return novelContentNode.innerHTML.replace(/<br>\s*<br>/g, '<br>');
+	[].slice.apply(novelContentNode.querySelectorAll("center, #center_tip, #content_tip, p, a, div, h1")).forEach(node => node.remove());
+	return novelContentNode.innerHTML
+		// Check https://stackoverflow.com/a/61151122/2334320 for detail about this regex
+		.replace(/(\n|^)\s*[^\p{Script=Han}]*永[^\p{Script=Han}]*久[^\p{Script=Han}]*免[^\p{Script=Han}]*费[^\p{Script=Han}]*看[^\p{Script=Han}]*小[^\p{Script=Han}]*说[^\p{Script=Han}]*\s*(\n|$)/gu, '\n')
+		.replace(/(\n|^)\s*[^\p{Script=Han}]*正[^\p{Script=Han}]*版[^\p{Script=Han}]*首[^\p{Script=Han}]*发[^\p{Script=Han}]*\s*(\n|$)/gu, '\n')
+		.replace(/(\n|^)\s*[^\p{Script=Han}]*唯[^\p{Script=Han}]*一[^\p{Script=Han}]*正[^\p{Script=Han}]*版[^\p{Script=Han}]*其[^\p{Script=Han}]*他[^\p{Script=Han}]*都[^\p{Script=Han}]*是[^\p{Script=Han}]*盗[^\p{Script=Han}]*版[^\p{Script=Han}]*\s*(\n|$)/gu, '\n')
+		.replace(/(\n|^)\s*[^\p{Script=Han}]*最[^\p{Script=Han}]*新[^\p{Script=Han}]*章[^\p{Script=Han}]*节[^\p{Script=Han}]*上[^\p{Script=Han}]*\s*(\n|$)/gu, '\n')
+		.replace(/(\n|^)\s*[^\p{Script=Han}]*更[^\p{Script=Han}]*新[^\p{Script=Han}]*最[^\p{Script=Han}]*快[^\p{Script=Han}]*上[^\p{Script=Han}]*\s*(\n|$)/gu, '\n')
+		.replace(/(\n|^)\s*[^\p{Script=Han}]*看[^\p{Script=Han}]*正[^\p{Script=Han}]*版[^\p{Script=Han}]*章[^\p{Script=Han}]*节[^\p{Script=Han}]*上[^\p{Script=Han}]*\s*(\n|$)/gu, '\n')
+		.replace(/(\n|^)\s*[^\p{Script=Han}]*首[^\p{Script=Han}]*发[^\p{Script=Han}]*\s*(\n|$)/gu, '\n')
+		.replace(/<br>\s*<br>/g, '<br>')
+		.replace(/^\s*<br>/, '');
 }
 
 class NovelReader
@@ -138,25 +168,25 @@ class NovelReader
 	{
 		const currentChapterIndex = this.getCurrentLocation().index;
 		const downloadChapters = this.chapters.filter((_, index) => index >= currentChapterIndex);
-		// for (const chapter of downloadChapters)
-		// {
-		// 	while (true)
-		// 	{
-		// 		try
-		// 		{
-		// 			await this.crawler.crawlChapterContent(chapter);
-		// 			await new Promise(resolve => setTimeout(resolve, 500));
-		// 			break;
-		// 		}
-		// 		catch (e)
-		// 		{
-		// 			console.info(`Failed to crawl ${chapter.title}, sleep for 1 second and try again`)
-		// 			await new Promise(resolve => setTimeout(resolve, 1000));
-		// 			console.info("Sleep finished")
-		// 		}
-		// 	}
-		// }
-		await Promise.all(downloadChapters.map(chapter => this.crawler.crawlChapterContent(chapter)));
+		for (const chapter of downloadChapters)
+		{
+			while (true)
+			{
+				try
+				{
+					await this.crawler.crawlChapterContent(chapter);
+					await new Promise(resolve => setTimeout(resolve, 500));
+					break;
+				}
+				catch (e)
+				{
+					console.info(`Failed to crawl ${chapter.title}, sleep for 1 second and try again`)
+					await new Promise(resolve => setTimeout(resolve, 1000));
+					console.info("Sleep finished")
+				}
+			}
+		}
+		// await Promise.all(downloadChapters.map(chapter => this.crawler.crawlChapterContent(chapter)));
 		const novelContent = downloadChapters.map(chapter => `${chapter.title}\n\n${chapter.content}`).join("\n");
 		const novelName = window.prompt("下载完成，请输入小说名称");
 		const a = document.createElement('a');
@@ -182,8 +212,8 @@ class NovelReader
 		container.innerHTML = `
 		<div id="chapters"></div>
 		<div id="side-menu">
-			<button class="side-button" id="menu-button" style="background-image: url(${chrome.extension.getURL("novel/background.png")});">目录</button>
-			<button class="side-button" id="download-novel" style="background-image: url(${chrome.extension.getURL("novel/download.svg")});"></button>
+			<button class="side-button" id="menu-button" style="background-image: url(${chrome.runtime.getURL("novel/background.png")});">目录</button>
+			<button class="side-button" id="download-novel" style="background-image: url(${chrome.runtime.getURL("novel/download.svg")});"></button>
 		</div>
 		<div id="category-dialog">
 			<ul id="category-items">

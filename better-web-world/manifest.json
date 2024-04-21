@@ -40,18 +40,28 @@
 		{
 			"matches": [
 				"https://www.ibswtan.com/*/*/",
-				"https://www.xbiquge.la/*/*/",
+				"https://www.xbiqugu.info/*/*/",
 				"https://www.xbiquwx.la/*/",
 				"https://www.vbiquge.com/*/",
 				"https://www.dingdiann.net/ddk*/",
-				"https://www.69shu.com/*/",
+				"https://www.69xinshu.com/*/",
 				"https://www.vipxs.la/*/",
 				"https://www.20xs.cc/dingdian/*/",
 				"https://www.biquger.com/biquge/*/",
 				"https://www.mayiwxw.com/*/",
 				"https://www.shudai.org/*/",
 				"https://www.biqugesk.org/biquge/*/",
-				"https://mip.cv148.com/*/"
+				"https://mip.cv148.com/*/",
+				"https://www.qu-la.com/*/*",
+				"https://wujixsw.com/*/",
+				"https://www.ibiquges.org/*/*/",
+				"https://www.liewenn.com/b/*/*/",
+				"https://www.liewenn.com/b/*/*/",
+				"https://www.piaotia.com/html/*/*/",
+				"http://www.26ks.org/book/*/",
+				"https://www.xxbiqudu.com/*/",
+				"https://www.aishangba4.com/*/",
+				"http://www.5you8.net/*/*/"
 			],
 			"css": [
 				"novel/novel-reader.css"
@@ -69,17 +79,19 @@
 			]
 		}
 	],
-	"background": {
-		"scripts": [
-			"hot-reload.js"
-		]
-	},
 	"web_accessible_resources": [
-		"novel/background.png",
-		"novel/download.svg"
+		{
+			"resources": [
+				"novel/background.png",
+				"novel/download.svg"
+			],
+			"matches": [
+				"*://*/*"
+			]
+		}
 	],
 	"permissions": [
 		"storage"
 	],
-	"manifest_version": 2
+	"manifest_version": 3
 }

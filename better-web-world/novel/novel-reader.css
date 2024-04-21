@@ -2,14 +2,14 @@
 	display: none;
 }
 body {
-	background-color: #E5E4DB!important;
+	background: #E5E4DB!important;
 }
 
 #novel-reader {
 	position: relative;
 	display: block;
 	padding-top: 8px;
-	font-family: 'Microsoft YaHei';
+	font-family: system-ui, 'Microsoft YaHei';
 	font-size: 16px;
 }
 
