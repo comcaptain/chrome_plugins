@@ -50,10 +50,11 @@ class Chapter
 	 * @param {String} title of the chapter
 	 * @param {String} url of the chapter detail screen
 	 */
-	constructor(title, url)
+	constructor(title, url, isTxt = false)
 	{
 		this.title = title;
 		this.url = url;
+		this.isTxt = isTxt;
 		this.content = null;
 		// Height of chapter node in pixel
 		this.height = null;
@@ -71,6 +72,43 @@ function debounce(callback, wait)
 		clearTimeout(timeout);
 		timeout = setTimeout(() => callback.apply(context, args), wait);
 	};
+}
+
+class TxtNovelAccessor
+{
+	constructor()
+	{
+		const txtContent = document.querySelector("pre").innerHTML;
+		const chapterTitleRegex = /第[一二三四五六七八九十百千零0-9]+章\s+[^\n]*/g;
+		const chapters = [];
+		const matches = [...txtContent.matchAll(chapterTitleRegex)];
+		// Loop through the matches and slice the content based on the index of matches
+		matches.forEach((match, index) =>
+		{
+			const start = match.index + match[0].length;
+			let end = txtContent.length;
+			if (index + 1 < matches.length)
+			{
+				end = matches[index + 1].index;
+			}
+			const chapterTitle = match[0];
+			const chapterContent = txtContent.slice(start, end).trim().split("\n").filter(line => line.trim()).map(line => `　　${line.trim()}`).join("\n");
+			const chapter = new Chapter(chapterTitle, "", true);
+			chapter.content = chapterContent;
+			chapters.push(chapter);
+		});
+		this.chapters = chapters;
+	}
+
+	crawlChapterLinks()
+	{
+		return this.chapters;
+	}
+
+	crawlChapterContent()
+	{
+		// do nothing
+	}
 }
 
 class Crawler
@@ -140,9 +178,9 @@ function preprocessChapterContentHTML(novelContentNode)
 
 class NovelReader
 {
-	constructor(websiteConfig)
+	constructor(crawler)
 	{
-		this.crawler = new Crawler(websiteConfig);
+		this.crawler = crawler;
 		this.saveCurrentLocation = debounce.call(this, this.saveCurrentLocation, 100);
 	}
 
@@ -231,7 +269,7 @@ class NovelReader
 			<div class="chapter-header">
 				<h3 class="chapter-title">${chapter.title}</h3>
 			</div>
-			<div class="chapter-body">${chapter.content}</div>`;
+			<div class="chapter-body${chapter.isTxt ? " is-txt" : ""}">${chapter.content}</div>`;
 		return chapterNode;
 	}
 
@@ -382,13 +420,17 @@ class NovelReader
 	}
 }
 
-const config = CONFIGURES[document.domain];
-if (config)
+const config = CONFIGURES[location.host];
+if (location.href.endsWith(".txt"))
 {
-	new NovelReader(config).render();
+	new NovelReader(new TxtNovelAccessor()).render();
+}
+else if (config)
+{
+	new NovelReader(new Crawler(config)).render();
 }
 else
 {
-	alert(`Current domain ${document.domain} hasn't been set up yet`)
+	alert(`Current domain ${location.host} hasn't been set up yet`)
 }
 

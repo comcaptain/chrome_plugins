@@ -35,6 +35,7 @@ body {
 .chapter-title {
 	font-size: 26px;
 	font-weight: normal;
+	margin: 0;
 }
 .chapter-info {
 	color: rgb(153, 153, 153);
@@ -49,6 +50,9 @@ body {
 	font-size: 18px;
 	line-height: 32.4px;
 	overflow: hidden; /* For very long rows. Like a thousand dots */
+}
+.chapter > .chapter-body.is-txt {
+	white-space: pre-wrap;
 }
 
 #side-menu {

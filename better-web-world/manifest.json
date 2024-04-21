@@ -87,7 +87,7 @@
 				"novel/download.svg"
 			],
 			"matches": [
-				"*://*/*"
+				"<all_urls>"
 			]
 		}
 	],
