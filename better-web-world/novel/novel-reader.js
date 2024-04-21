@@ -74,12 +74,20 @@ function debounce(callback, wait)
 	};
 }
 
+function createTxtNovelChapter(chapterTitle, chapterContent)
+{
+	chapterContent = chapterContent.trim().split("\n").filter(line => line.trim()).map(line => `　　${line.trim()}`).join("\n");
+	const chapter = new Chapter(chapterTitle, "", true);
+	chapter.content = chapterContent;
+	return chapter;
+}
+
 class TxtNovelAccessor
 {
 	constructor()
 	{
 		const txtContent = document.querySelector("pre").innerHTML;
-		const chapterTitleRegex = /第[一二三四五六七八九十百千零0-9]+章\s+[^\n]*/g;
+		const chapterTitleRegex = /第[一二三四五六七八九十百千零0-9]+章[^\n]*/g;
 		const chapters = [];
 		const matches = [...txtContent.matchAll(chapterTitleRegex)];
 		// Loop through the matches and slice the content based on the index of matches
@@ -92,11 +100,13 @@ class TxtNovelAccessor
 				end = matches[index + 1].index;
 			}
 			const chapterTitle = match[0];
-			const chapterContent = txtContent.slice(start, end).trim().split("\n").filter(line => line.trim()).map(line => `　　${line.trim()}`).join("\n");
-			const chapter = new Chapter(chapterTitle, "", true);
-			chapter.content = chapterContent;
-			chapters.push(chapter);
+			const chapterContent = txtContent.slice(start, end);
+			chapters.push(createTxtNovelChapter(chapterTitle, chapterContent));
 		});
+		if (matches.length === 0)
+		{
+			chapters.push(createTxtNovelChapter(document.title.replace(".txt", ""), txtContent));
+		}
 		this.chapters = chapters;
 	}
 
